@@ -1,16 +1,8 @@
 import { BaseApp } from "../base/types";
 import { FinderAppComponent } from "./components/FinderAppComponent";
+import { createAppMetadata } from "@/lib/appMetadata";
 
-export const appMetadata = {
-  name: "Finder",
-  version: "1.0.0",
-  creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
-  },
-  github: "https://github.com/ryokun6/ryos",
-  icon: "/icons/mac.png",
-};
+export const appMetadata = createAppMetadata("Finder", "/icons/mac.png");
 
 export const helpItems = [
   {

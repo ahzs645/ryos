@@ -38,6 +38,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { getTranslatedAppName } from "@/utils/i18n";
 import { useIsPhone } from "@/hooks/useIsPhone";
+import { getCreatorConfig, getOSConfig } from "@/lib/config";
 
 // Helper function to get app name (using translations)
 const getAppName = (appId: string): string => {
@@ -62,14 +63,18 @@ const finderHelpItems = [
   },
 ];
 
+// Get config values for metadata
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
+
 const finderMetadata = {
   name: "Finder",
   version: "1.0.0",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/mac.png",
 };
 

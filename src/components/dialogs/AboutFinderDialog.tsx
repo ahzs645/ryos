@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { getTranslatedAppName } from "@/utils/i18n";
+import { getCreatorConfig } from "@/lib/config";
 
 interface AboutFinderDialogProps {
   isOpen: boolean;
@@ -153,7 +154,7 @@ export function AboutFinderDialog({
                       : undefined,
                   }}
                 >
-                  © Ryo Lu. 1992-{new Date().getFullYear()}
+                  © {getCreatorConfig().name}. {getCreatorConfig().copyrightStartYear}-{new Date().getFullYear()}
                 </div>
               </div>
             </div>

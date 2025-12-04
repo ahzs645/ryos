@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getBrowserConfig, getCreatorConfig } from "@/lib/config";
 
 // Define types
 export interface Favorite {
@@ -12,11 +13,11 @@ export interface Favorite {
 }
 
 // Define a constant for domains that bypass the proxy when in "now" mode
+// Includes config-based domains plus hardcoded common ones
+const browserConfig = getBrowserConfig();
 export const DIRECT_PASSTHROUGH_DOMAINS = [
-  "baby-cursor.ryo.lu",
-  "os.ryo.lu",
+  ...browserConfig.passthroughDomains,
   "hcsimulator.com",
-  "os.rocorgi.wang",
   "iso-city.com",
   "shaoruu.io",
 ];
@@ -105,25 +106,21 @@ export const DEFAULT_TIMELINE: { [year: string]: string } = {
     "Omniverse civilization. Plastic physics. Infinite realms. Boundless cognition.",
 };
 
+// Get creator config for personalized favorites
+const creatorConfig = getCreatorConfig();
+
 export const DEFAULT_FAVORITES: Favorite[] = [
   {
     title: "Apple",
-    url: "https://apple.com",
-    favicon: "https://www.google.com/s2/favicons?domain=apple.com&sz=32",
-    year: "2001",
+    url: browserConfig.defaultUrl,
+    favicon: `https://www.google.com/s2/favicons?domain=${new URL(browserConfig.defaultUrl).hostname}&sz=32`,
+    year: browserConfig.defaultYear,
     isDirectory: false,
   },
   {
-    title: "Ryo",
-    url: "https://ryo.lu",
-    favicon: "https://www.google.com/s2/favicons?domain=ryo.lu&sz=32",
-    year: "current",
-    isDirectory: false,
-  },
-  {
-    title: "NewJeans",
-    url: "https://newjeans.jp",
-    favicon: "https://www.google.com/s2/favicons?domain=newjeans.jp&sz=32",
+    title: browserConfig.favoritePersonal.title,
+    url: browserConfig.favoritePersonal.url,
+    favicon: `https://www.google.com/s2/favicons?domain=${new URL(browserConfig.favoritePersonal.url).hostname}&sz=32`,
     year: "current",
     isDirectory: false,
   },
@@ -256,13 +253,6 @@ export const DEFAULT_FAVORITES: Favorite[] = [
     title: "Tools",
     isDirectory: true, // Mark as directory
     children: [
-      {
-        title: "Baby Cursor",
-        url: "https://baby-cursor.ryo.lu",
-        favicon: "https://www.google.com/s2/favicons?domain=ryo.lu&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
       {
         title: "HyperCards",
         url: "https://hcsimulator.com",
