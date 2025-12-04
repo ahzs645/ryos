@@ -19,7 +19,7 @@ import { useThemeStore } from "@/stores/useThemeStore";
 import { CHAT_ANALYTICS } from "@/utils/analytics";
 import { checkOfflineAndShowError } from "@/utils/offline";
 import { useTranslation } from "react-i18next";
-import { getAIConfig } from "@/lib/config";
+import { getAIConfig, getFeatureFlags } from "@/lib/config";
 
 // Animated ellipsis component (copied from TerminalAppComponent)
 function AnimatedEllipsis() {
@@ -117,6 +117,9 @@ export function ChatInput({
   // Get AI config for the handle
   const aiConfig = getAIConfig();
   const aiHandle = `@${aiConfig.handle}`;
+
+  // Get feature flags
+  const featureFlags = getFeatureFlags();
 
   // Check if user is typing AI mention
   const isTypingRyoMention =
@@ -429,30 +432,32 @@ export function ChatInput({
                     </Tooltip>
                   </TooltipProvider>
                 )}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="relative">
-                        <AudioInputButton
-                          ref={audioButtonRef}
-                          onTranscriptionComplete={handleTranscriptionComplete}
-                          onTranscriptionStart={handleTranscriptionStart}
-                          onRecordingStateChange={handleRecordingStateChange}
-                          isLoading={isTranscribing}
-                          silenceThreshold={1200}
-                          className={`w-[22px] h-[22px] flex items-center justify-center ${
-                            isMacTheme
-                              ? "text-neutral-400 hover:text-neutral-800 transition-colors"
-                              : ""
-                          }`}
-                        />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{t("apps.chats.ariaLabels.pushToTalk")}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                {featureFlags.enableVoiceInput && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="relative">
+                          <AudioInputButton
+                            ref={audioButtonRef}
+                            onTranscriptionComplete={handleTranscriptionComplete}
+                            onTranscriptionStart={handleTranscriptionStart}
+                            onRecordingStateChange={handleRecordingStateChange}
+                            isLoading={isTranscribing}
+                            silenceThreshold={1200}
+                            className={`w-[22px] h-[22px] flex items-center justify-center ${
+                              isMacTheme
+                                ? "text-neutral-400 hover:text-neutral-800 transition-colors"
+                                : ""
+                            }`}
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t("apps.chats.ariaLabels.pushToTalk")}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
             {isLoading || isSpeechPlaying ? (

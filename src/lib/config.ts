@@ -76,6 +76,45 @@ export function getDefaultSettings() {
 }
 
 /**
+ * Helper to parse boolean env vars
+ */
+function parseBool(value: string | undefined, defaultValue: boolean): boolean {
+  if (value === undefined || value === "") return defaultValue;
+  return value.toLowerCase() === "true";
+}
+
+/**
+ * Get feature flags for enabling/disabling functionality
+ * Useful for static deployments without backend
+ */
+export function getFeatureFlags() {
+  const staticMode = parseBool(import.meta.env.VITE_STATIC_MODE, false);
+
+  // In static mode, disable all backend-dependent features
+  if (staticMode) {
+    return {
+      staticMode: true,
+      enableAIChat: false,
+      enableChatRooms: false,
+      enableIETimeTravel: false,
+      enableVoiceInput: false,
+      enableAIApplets: false,
+      enablePCApp: true, // PC app works without backend
+    };
+  }
+
+  return {
+    staticMode: false,
+    enableAIChat: parseBool(import.meta.env.VITE_ENABLE_AI_CHAT, true),
+    enableChatRooms: parseBool(import.meta.env.VITE_ENABLE_CHAT_ROOMS, true),
+    enableIETimeTravel: parseBool(import.meta.env.VITE_ENABLE_IE_TIME_TRAVEL, true),
+    enableVoiceInput: parseBool(import.meta.env.VITE_ENABLE_VOICE_INPUT, true),
+    enableAIApplets: parseBool(import.meta.env.VITE_ENABLE_AI_APPLETS, true),
+    enablePCApp: parseBool(import.meta.env.VITE_ENABLE_PC_APP, true),
+  };
+}
+
+/**
  * Get all configuration as a single object
  */
 export function getAllConfig() {
@@ -86,8 +125,12 @@ export function getAllConfig() {
     social: getSocialConfig(),
     browser: getBrowserConfig(),
     defaults: getDefaultSettings(),
+    features: getFeatureFlags(),
   };
 }
 
 // Export config singleton for convenience
 export const config = getAllConfig();
+
+// Export feature flags as a convenient shorthand
+export const features = getFeatureFlags();

@@ -11,6 +11,7 @@ import type {
 } from "@/apps/base/types";
 import type { AppletViewerInitialData } from "@/apps/applet-viewer";
 import { useAppStore } from "@/stores/useAppStore";
+import { getFeatureFlags } from "@/lib/config";
 
 export type AppId = (typeof appIds)[number];
 
@@ -376,6 +377,35 @@ export const appRegistry = {
 // HELPER FUNCTIONS
 // ============================================================================
 
+// Helper function to check if an app is enabled based on feature flags
+export const isAppEnabled = (appId: AppId): boolean => {
+  const flags = getFeatureFlags();
+
+  // Map apps to their feature flags
+  const appFeatureMap: Partial<Record<AppId, keyof ReturnType<typeof getFeatureFlags>>> = {
+    "chats": "enableAIChat",
+    "pc": "enablePCApp",
+  };
+
+  const featureFlag = appFeatureMap[appId];
+  if (featureFlag) {
+    return flags[featureFlag] as boolean;
+  }
+
+  // Apps without specific flags are always enabled
+  return true;
+};
+
+// Get list of disabled app IDs based on feature flags
+export const getDisabledAppIds = (): AppId[] => {
+  return appIds.filter((id) => !isAppEnabled(id));
+};
+
+// Get list of enabled app IDs based on feature flags
+export const getEnabledAppIds = (): AppId[] => {
+  return appIds.filter((id) => isAppEnabled(id));
+};
+
 // Helper function to get app icon path
 export const getAppIconPath = (appId: AppId): string => {
   const app = appRegistry[appId];
@@ -385,11 +415,27 @@ export const getAppIconPath = (appId: AppId): string => {
   return app.icon.src;
 };
 
-// Helper function to get all apps except Finder
+// Helper function to get all apps except Finder (respects feature flags)
 export const getNonFinderApps = (): Array<{
   name: string;
   icon: string;
   id: AppId;
+}> => {
+  return Object.entries(appRegistry)
+    .filter(([id]) => id !== "finder" && isAppEnabled(id as AppId))
+    .map(([id, app]) => ({
+      name: app.name,
+      icon: getAppIconPath(id as AppId),
+      id: id as AppId,
+    }));
+};
+
+// Helper function to get all apps (including disabled ones, for reference)
+export const getAllNonFinderApps = (): Array<{
+  name: string;
+  icon: string;
+  id: AppId;
+  enabled: boolean;
 }> => {
   return Object.entries(appRegistry)
     .filter(([id]) => id !== "finder")
@@ -397,6 +443,7 @@ export const getNonFinderApps = (): Array<{
       name: app.name,
       icon: getAppIconPath(id as AppId),
       id: id as AppId,
+      enabled: isAppEnabled(id as AppId),
     }));
 };
 
