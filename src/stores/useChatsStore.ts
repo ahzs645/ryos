@@ -8,6 +8,7 @@ import {
 import { track } from "@vercel/analytics";
 import { APP_ANALYTICS } from "@/utils/analytics";
 import i18n from "@/lib/i18n";
+import { getAIConfig } from "@/lib/config";
 
 // Recovery mechanism - uses different prefix to avoid reset
 const USERNAME_RECOVERY_KEY = "_usr_recovery_key_";
@@ -247,7 +248,7 @@ export interface ChatsStoreState {
 const getInitialAiMessage = (): AIChatMessage => ({
   id: "1",
   role: "assistant",
-  parts: [{ type: "text" as const, text: i18n.t("apps.chats.messages.greeting") }],
+  parts: [{ type: "text" as const, text: i18n.t("apps.chats.messages.greeting", { aiName: getAIConfig().name.toLowerCase() }) }],
   metadata: {
     createdAt: new Date(),
   },

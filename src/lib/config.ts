@@ -4,6 +4,14 @@
  */
 
 /**
+ * Helper to parse boolean env vars
+ */
+function parseBool(value: string | undefined, defaultValue: boolean): boolean {
+  if (value === undefined || value === "") return defaultValue;
+  return value.toLowerCase() === "true";
+}
+
+/**
  * Get creator/branding configuration
  */
 export function getCreatorConfig() {
@@ -27,15 +35,87 @@ export function getAIConfig() {
 }
 
 /**
+ * Get CV/Profile configuration
+ */
+export function getCVConfig() {
+  return {
+    // Path to CV YAML file (relative to public folder)
+    yamlPath: import.meta.env.VITE_CV_YAML_PATH || "/data/CV.yaml",
+    // How to display the name: "first", "last", "full", "custom"
+    nameDisplayMode: import.meta.env.VITE_NAME_DISPLAY_MODE || "first",
+    // Custom name to use when nameDisplayMode is "custom"
+    customName: import.meta.env.VITE_CUSTOM_NAME || "",
+    // Whether to use CV data for OS branding (if false, uses VITE_OS_FIRST_NAME)
+    useCVForBranding: parseBool(import.meta.env.VITE_USE_CV_FOR_BRANDING, false),
+  };
+}
+
+/**
  * Get OS branding configuration
  */
 export function getOSConfig() {
   return {
+    // Base name without theme suffix (e.g., "ahmadOS", "ryOS")
     name: import.meta.env.VITE_OS_NAME || "ryOS",
+    // First name for "firstnameOS X" style branding (e.g., "ahmad" -> "ahmadOS X")
+    // This is used as fallback when CV data is not loaded or useCVForBranding is false
+    firstName: import.meta.env.VITE_OS_FIRST_NAME || "",
+    // OS suffix to append after firstName (e.g., "OS" -> "ahmadOS")
+    suffix: import.meta.env.VITE_OS_SUFFIX || "OS",
+    // Suffix style: "themed" (adds X/7/98/XP based on theme), "none", or custom suffix
+    suffixStyle: import.meta.env.VITE_OS_SUFFIX_STYLE || "themed",
+    // Custom suffix when suffixStyle is not "themed" or "none" (e.g., "X", "XP")
+    customSuffix: import.meta.env.VITE_OS_CUSTOM_SUFFIX || "",
     url: import.meta.env.VITE_OS_URL || "https://os.ryo.lu",
     githubUrl:
       import.meta.env.VITE_OS_GITHUB_URL || "https://github.com/ryokun6/ryos",
   };
+}
+
+/**
+ * Get the full OS name with theme suffix
+ * @param theme - Current theme (system7, macosx, win98, xp)
+ * @returns The full branded OS name (e.g., "ahmadOS X", "ryOS 98")
+ */
+export function getFullOSName(theme?: string): string {
+  const osConfig = getOSConfig();
+  const baseName = osConfig.name;
+  const suffixStyle = osConfig.suffixStyle;
+
+  // If using firstName pattern, construct the name dynamically
+  // e.g., firstName="ahmad" -> "ahmadOS" or with suffix "ahmadOS X"
+  const displayName = osConfig.firstName
+    ? `${osConfig.firstName}OS`
+    : baseName;
+
+  if (suffixStyle === "none") {
+    return displayName;
+  }
+
+  if (suffixStyle === "themed" && theme) {
+    const themeSuffixes: Record<string, string> = {
+      system7: " 7",
+      macosx: " X",
+      win98: " 98",
+      xp: " XP",
+    };
+    return displayName + (themeSuffixes[theme] || "");
+  }
+
+  // Custom suffix
+  if (osConfig.customSuffix) {
+    return `${displayName} ${osConfig.customSuffix}`;
+  }
+
+  return displayName;
+}
+
+/**
+ * Get OS name without suffix (base name only)
+ */
+export function getBaseOSName(): string {
+  const osConfig = getOSConfig();
+  return osConfig.firstName ? `${osConfig.firstName}OS` : osConfig.name;
 }
 
 /**
@@ -76,14 +156,6 @@ export function getDefaultSettings() {
 }
 
 /**
- * Helper to parse boolean env vars
- */
-function parseBool(value: string | undefined, defaultValue: boolean): boolean {
-  if (value === undefined || value === "") return defaultValue;
-  return value.toLowerCase() === "true";
-}
-
-/**
  * Get feature flags for enabling/disabling functionality
  * Useful for static deployments without backend
  */
@@ -121,6 +193,7 @@ export function getAllConfig() {
   return {
     creator: getCreatorConfig(),
     ai: getAIConfig(),
+    cv: getCVConfig(),
     os: getOSConfig(),
     social: getSocialConfig(),
     browser: getBrowserConfig(),

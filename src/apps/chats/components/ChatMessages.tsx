@@ -37,6 +37,7 @@ import { LinkPreview } from "@/components/shared/LinkPreview";
 import { useThemeStore } from "@/stores/useThemeStore";
 import EmojiAquarium from "@/components/shared/EmojiAquarium";
 import { useTranslation } from "react-i18next";
+import { getAIConfig } from "@/lib/config";
 import i18n from "@/lib/i18n";
 
 // --- Color Hashing for Usernames ---
@@ -161,7 +162,7 @@ const getErrorMessage = (error: Error): string => {
         if (errorData.isAuthenticated) {
           return i18n.t("apps.chats.status.dailyLimitReached");
         } else {
-          return i18n.t("apps.chats.status.loginToContinue");
+          return i18n.t("apps.chats.status.loginToContinue", { aiName: getAIConfig().name });
         }
       }
 
@@ -746,10 +747,10 @@ function ChatMessagesContent({
               <span
                 className="max-w-[120px] inline-block overflow-hidden text-ellipsis whitespace-nowrap"
                 title={
-                  message.username || (message.role === "user" ? t("apps.chats.messages.you") : t("apps.chats.messages.ryo"))
+                  message.username || (message.role === "user" ? t("apps.chats.messages.you") : t("apps.chats.messages.ryo", { aiName: getAIConfig().name }))
                 }
               >
-                {message.username || (message.role === "user" ? t("apps.chats.messages.you") : t("apps.chats.messages.ryo"))}
+                {message.username || (message.role === "user" ? t("apps.chats.messages.you") : t("apps.chats.messages.ryo", { aiName: getAIConfig().name }))}
               </span>{" "}
               <span className="text-gray-400 select-text">
                 {message.metadata?.createdAt ? (
@@ -1338,7 +1339,7 @@ function ChatMessagesContent({
           if (isRateLimitError) return null;
 
           // Special handling for login message - render in gray like "Start a new conversation?"
-          if (errorMessage === t("apps.chats.status.loginToContinue")) {
+          if (errorMessage === t("apps.chats.status.loginToContinue", { aiName: getAIConfig().name })) {
             if (username) {
               return null;
             }

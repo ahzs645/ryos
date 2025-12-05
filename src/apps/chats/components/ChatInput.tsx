@@ -420,14 +420,14 @@ export function ChatInput({
                                 : ""
                             }`}
                             disabled={isLoading}
-                            aria-label={t("apps.chats.ariaLabels.mentionRyo")}
+                            aria-label={t("apps.chats.ariaLabels.mentionRyo", { aiName: getAIConfig().name })}
                           >
                             <AtSign className="h-4 w-4" />
                           </button>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("apps.chats.ariaLabels.mentionRyo")}</p>
+                        <p>{t("apps.chats.ariaLabels.mentionRyo", { aiName: getAIConfig().name })}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -629,7 +629,7 @@ export function ChatInput({
               className="mt-2 px-1 text-xs text-neutral-700 font-geneva-12"
             >
               {isTypingRyoMention
-                ? t("apps.chats.status.ryoWillRespond") + (debugMode && modelDisplayName ? ` (${modelDisplayName})` : "")
+                ? t("apps.chats.status.ryoWillRespond", { aiName: getAIConfig().name }) + (debugMode && modelDisplayName ? ` (${modelDisplayName})` : "")
                 : t("apps.chats.status.usingModel", { model: modelDisplayName })}
             </motion.div>
           )}

@@ -1,3 +1,8 @@
+import { getCreatorConfig, getOSConfig } from "@/lib/config";
+
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
+
 export const helpItems = [
   {
     icon: "🛒",
@@ -6,13 +11,13 @@ export const helpItems = [
   },
   {
     icon: "💬",
-    title: "Create with ryOS Chat",
-    description: "Ask ryOS Chat to create custom apps and applets for you. Share your ideas and get working apps instantly.",
+    title: `Create with ${osConfig.name} Chat`,
+    description: `Ask ${osConfig.name} Chat to create custom apps and applets for you. Share your ideas and get working apps instantly.`,
   },
   {
     icon: "📄",
     title: "View Applets",
-    description: "Open and run applets saved from ryOS Chat or downloaded from the store.",
+    description: `Open and run applets saved from ${osConfig.name} Chat or downloaded from the store.`,
   },
   {
     icon: "📤",
@@ -35,10 +40,10 @@ export const appMetadata = {
   name: "Applet Store",
   version: "1.0",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/default/app.png",
 };
 

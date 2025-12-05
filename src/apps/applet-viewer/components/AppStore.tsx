@@ -8,6 +8,7 @@ import { Trash2, Star, ArrowLeft, Sparkles, ChevronLeft, ChevronRight } from "lu
 import { useAppletActions, type Applet } from "../utils/appletActions";
 import { AppStoreFeed, type AppStoreFeedRef } from "./AppStoreFeed";
 import { useTranslation } from "react-i18next";
+import { getAIConfig } from "@/lib/config";
 
 interface AppStoreProps {
   theme?: string;
@@ -28,7 +29,7 @@ export function AppStore({ theme, sharedAppletId, focusWindow }: AppStoreProps) 
   const feedRef = useRef<AppStoreFeedRef>(null);
   const username = useChatsStore((state) => state.username);
   const authToken = useChatsStore((state) => state.authToken);
-  const isAdmin = username?.toLowerCase() === "ryo" && !!authToken;
+  const isAdmin = username?.toLowerCase() === getAIConfig().handle.toLowerCase() && !!authToken;
   const isMacTheme = theme === "macosx";
   const isSystem7Theme = theme === "system7";
   const currentTheme = useThemeStore((state) => state.current);

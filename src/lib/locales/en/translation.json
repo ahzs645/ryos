@@ -81,13 +81,13 @@
       "restoringSystem": "Restoring System...",
       "formattingFileSystem": "Formatting File System...",
       "debugBootScreenTest": "Debug Boot Screen Test...",
-      "updatingToRyOS": "Updating to ryOS {{version}}...",
-      "updatingToRyOSWithBuild": "Updating to ryOS {{version}} ({{buildNumber}})...",
+      "updatingToRyOS": "Updating to {{osName}} {{version}}...",
+      "updatingToRyOSWithBuild": "Updating to {{osName}} {{version}} ({{buildNumber}})...",
       "rebooting": "Rebooting...",
       "resetAllSettings": "Reset All Settings",
-      "resetAllSettingsDesc": "Are you sure you want to reset all settings? This will clear all saved settings and restore default states. ryOS will restart after reset.",
+      "resetAllSettingsDesc": "Are you sure you want to reset all settings? This will clear all saved settings and restore default states. {{osName}} will restart after reset.",
       "formatFileSystem": "Format File System",
-      "formatFileSystemDesc": "Are you sure you want to format the file system? This will permanently delete all documents (except sample documents), images, and custom wallpapers. ryOS will restart after format."
+      "formatFileSystemDesc": "Are you sure you want to format the file system? This will permanently delete all documents (except sample documents), images, and custom wallpapers. {{osName}} will restart after format."
     },
     "desktop": {
       "setWallpaper": "Set Wallpaper…",
@@ -116,7 +116,7 @@
     },
     "aboutThisMac": {
       "title": "About This Computer",
-      "description": "Information about ryOS on this computer",
+      "description": "Information about {{osName}} on this computer",
       "builtInMemory": "Built-in Memory",
       "virtualMemory": "Virtual Memory",
       "virtualMemoryOff": "Off",
@@ -132,7 +132,7 @@
       "updatingAssets": "Updating assets",
       "files": "files",
       "total": "total",
-      "updateReady": "Update ready for ryOS {{version}} ({{buildNumber}})",
+      "updateReady": "Update ready for {{osName}} {{version}} ({{buildNumber}})",
       "reboot": "Reboot",
       "failedToCacheAssets": "Failed to cache assets",
       "failedToLoadAssetManifest": "Failed to load asset manifest",
@@ -141,7 +141,7 @@
       "couldNotCheckUpdates": "Could not check for updates"
     },
     "auth": {
-      "dialogTitle": "ryOS Login",
+      "dialogTitle": "{{osName}} Login",
       "username": "Username",
       "password": "Password",
       "logIn": "Log In",
@@ -573,20 +573,20 @@
       },
       "help": {
         "chatWithRyo": {
-          "title": "Chat with Ryo",
-          "description": "Type your message to chat with Ryo, generate code, or get help with ryOS."
+          "title": "Chat with {{aiName}}",
+          "description": "Type your message to chat with {{aiName}}, generate code, or get help with {{osName}}."
         },
         "createEditFiles": {
           "title": "Create & Edit Files",
-          "description": "Ask Ryo to create HTML applets, edit documents, read files, or search the Applets Store."
+          "description": "Ask {{aiName}} to create HTML applets, edit documents, read files, or search the Applets Store."
         },
         "controlApps": {
           "title": "Control Apps",
-          "description": "Ask Ryo to launch or close apps, switch themes, or control iPod playback."
+          "description": "Ask {{aiName}} to launch or close apps, switch themes, or control iPod playback."
         },
         "joinChatRooms": {
           "title": "Join Chat Rooms",
-          "description": "Connect with others in public chat rooms. Mention @ryo for AI responses."
+          "description": "Connect with others in public chat rooms. Mention @{{aiHandle}} for AI responses."
         },
         "pushToTalk": {
           "title": "Push to Talk",
@@ -594,7 +594,7 @@
         },
         "nudgeDjMode": {
           "title": "Nudge & DJ Mode",
-          "description": "Send 👋 nudge for context-aware tips. Ryo becomes a DJ when music is playing."
+          "description": "Send 👋 nudge for context-aware tips. {{aiName}} becomes a DJ when music is playing."
         }
       },
       "dialogs": {
@@ -627,17 +627,17 @@
         "failedToCreateRoom": "Failed to create room"
       },
       "status": {
-        "loginToRyOS": "Login to ryOS",
+        "loginToRyOS": "Login to {{osName}}",
         "loginToChat": "Login to Chat",
         "clear": "Clear",
         "leave": "Leave",
-        "ryo": "@ryo",
+        "ryo": "@{{aiHandle}}",
         "chatRequiresInternet": "Chat requires an internet connection",
-        "ryoWillRespond": "Ryo will respond to this message",
+        "ryoWillRespond": "{{aiName}} will respond to this message",
         "usingModel": "Using {{model}}",
         "noTranscriptionText": "No transcription text received",
         "dailyLimitReached": "Daily AI message limit reached.",
-        "loginToContinue": "Login to continue chatting with Ryo.",
+        "loginToContinue": "Login to continue chatting with {{aiName}}.",
         "sessionExpired": "Session expired. Please login again.",
         "retry": "Retry",
         "startNewConversation": "Start a new conversation?",
@@ -654,7 +654,7 @@
       },
       "ariaLabels": {
         "sendNudge": "Send a Nudge",
-        "mentionRyo": "Mention Ryo",
+        "mentionRyo": "Mention {{aiName}}",
         "pushToTalk": "Push to Talk",
         "stopGeneration": "Stop generation",
         "copyMessage": "Copy message",
@@ -675,9 +675,9 @@
       },
       "messages": {
         "you": "You",
-        "ryo": "Ryo",
+        "ryo": "{{aiName}}",
         "delete": "Delete",
-        "greeting": "👋 hey! i'm ryo. ask me anything!"
+        "greeting": "👋 hey! i'm {{aiName}}. ask me anything!"
       },
       "toolCalls": {
         "loadingMusicLibrary": "Loading music library…",
@@ -912,7 +912,7 @@
         },
         "slashCommands": {
           "title": "Slash Commands",
-          "description": "Type / for quick actions or let Ryo AI edit lines remotely"
+          "description": "Type / for quick actions or let {{aiName}} AI edit lines remotely"
         }
       }
     },
@@ -1523,10 +1523,10 @@
       },
       "commands": {
         "about": "About terminal",
-        "ai": "Enter AI chat mode with ryo",
+        "ai": "Enter AI chat mode with {{aiHandle}}",
         "cat": "View file contents",
         "cd": "Change directory",
-        "chat": "Chat with ryo (alias)",
+        "chat": "Chat with {{aiHandle}} (alias)",
         "clear": "Clear terminal screen",
         "cowsay": "A talking cow",
         "date": "Display current date/time",
@@ -1540,7 +1540,7 @@
         "pwd": "Show current directory",
         "open": "Open app, file, or applet",
         "rm": "Move file to trash",
-        "ryo": "Chat with ryo",
+        "ryo": "Chat with {{aiHandle}}",
         "su": "Switch or create user",
         "touch": "Create empty file",
         "vim": "Open file in vim editor",
@@ -1582,9 +1582,9 @@
         "lastLogin": "last login: {{time}}",
         "typeHelpForCommands": "type 'help' to see available commands",
         "commandNotFound": "command not found: {{cmd}}. type 'help' for a list of available commands.",
-        "askRyoAnything": "ask ryo anything. type 'exit' to return to terminal.",
-        "askRyoWithPrompt": "ask ryo anything. type 'exit' to return to terminal.\n→ from your command: {{prompt}}",
-        "chatCleared": "chat cleared. you're still chatting with ryo. type 'exit' to return to terminal.",
+        "askRyoAnything": "ask {{aiHandle}} anything. type 'exit' to return to terminal.",
+        "askRyoWithPrompt": "ask {{aiHandle}} anything. type 'exit' to return to terminal.\n→ from your command: {{prompt}}",
+        "chatCleared": "chat cleared. you're still chatting with {{aiHandle}}. type 'exit' to return to terminal.",
         "isThinking": "is thinking"
       },
       "help": {
@@ -1602,7 +1602,7 @@
         },
         "aiAssistant": {
           "title": "AI Assistant",
-          "description": "Type \"ryo <prompt>\" to chat with Ryo AI directly inside the terminal."
+          "description": "Type \"{{aiHandle}} <prompt>\" to chat with {{aiName}} AI directly inside the terminal."
         },
         "fileEditing": {
           "title": "File Editing",
@@ -1622,7 +1622,7 @@
         "shareApplet": "Share Applet...",
         "importFromDevice": "Import from Device...",
         "exportAs": "Export As...",
-        "ryosApp": "ryOS App",
+        "ryosApp": "{{osName}} App",
         "html": "HTML",
         "store": "Store",
         "openAppletStore": "Open Applet Store",
@@ -1645,12 +1645,12 @@
           "description": "Browse and install applets from the community. Open the Store menu to discover new apps."
         },
         "createWithRyosChat": {
-          "title": "Create with ryOS Chat",
-          "description": "Ask ryOS Chat to create custom apps and applets for you. Share your ideas and get working apps instantly."
+          "title": "Create with {{osName}} Chat",
+          "description": "Ask {{osName}} Chat to create custom apps and applets for you. Share your ideas and get working apps instantly."
         },
         "viewApplets": {
           "title": "View Applets",
-          "description": "Open and run applets saved from ryOS Chat or downloaded from the store."
+          "description": "Open and run applets saved from {{osName}} Chat or downloaded from the store."
         },
         "shareApplets": {
           "title": "Share Applets",
@@ -1790,13 +1790,13 @@
       "terminalIeAmbientSynth": "Synth",
       "chatSynth": "Chat Synth",
       "selectAPreset": "Select a preset",
-      "loggedInToRyOS": "Logged in to ryOS",
+      "loggedInToRyOS": "Logged in to {{osName}}",
       "logIn": "Log In",
       "setPassword": "Set Password",
       "logOut": "Log Out",
       "loggingOut": "Logging out...",
       "logOutOfAllDevices": "Log Out of All Devices",
-      "ryOSAccount": "ryOS Account",
+      "ryOSAccount": "{{osName}} Account",
       "loginToSendMessages": "Login to send messages and more",
       "login": "Login",
       "checkForUpdates": "Check for Updates",
@@ -1806,7 +1806,7 @@
       "resetAllSettings": "Reset All Settings",
       "resetAllSettingsDescription": "This will clear all saved settings and restore defaults.",
       "formatFileSystem": "Format File System",
-      "formatFileSystemDescription": "This will clear all files (except sample docs), images, and custom wallpapers. ryOS will restart after format.",
+      "formatFileSystemDescription": "This will clear all files (except sample docs), images, and custom wallpapers. {{osName}} will restart after format.",
       "debugMode": "Debug Mode",
       "debugModeDescription": "Enable debugging settings",
       "shaderEffect": "Shader Effect",
@@ -1855,7 +1855,7 @@
   "settings": {
     "language": {
       "title": "Language",
-      "description": "Select your preferred language for ryOS interface",
+      "description": "Select your preferred language for {{osName}} interface",
       "english": "English",
       "chineseTraditional": "中文",
       "japanese": "日本語",

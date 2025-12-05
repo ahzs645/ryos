@@ -28,6 +28,7 @@ import { useFilesStore } from "@/stores/useFilesStore";
 import { useLanguageStore } from "@/stores/useLanguageStore";
 import { generateHTML, generateJSON } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import { getAIConfig } from "@/lib/config";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import TaskList from "@tiptap/extension-task-list";
@@ -2694,7 +2695,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
     const initialMessage: AIChatMessage = {
       id: "1", // Ensure consistent ID for the initial message
       role: "assistant",
-      parts: [{ type: "text", text: i18n.t("apps.chats.messages.greeting") }],
+      parts: [{ type: "text", text: i18n.t("apps.chats.messages.greeting", { aiName: getAIConfig().name.toLowerCase() }) }],
       metadata: {
         createdAt: new Date(),
       },
@@ -2742,7 +2743,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
       const transcript = aiMessages // Use messages from store
         .map((msg: UIMessage) => {
           const time = ""; // v5 UIMessage doesn't have createdAt
-          const sender = msg.role === "user" ? username || "You" : "Ryo";
+          const sender = msg.role === "user" ? username || "You" : getAIConfig().name;
           const content = getAssistantVisibleText(msg);
           return `**${sender}** (${time}):\n${content}`;
         })

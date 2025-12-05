@@ -14,7 +14,8 @@ import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { getTranslatedAppName } from "@/utils/i18n";
-import { getCreatorConfig } from "@/lib/config";
+import { getCreatorConfig, getFullOSName, getCVConfig } from "@/lib/config";
+import { useOSName } from "@/stores/useCvStore";
 
 interface AboutFinderDialogProps {
   isOpen: boolean;
@@ -39,6 +40,11 @@ export function AboutFinderDialog({
   const buildTime = useAppStore((state) => state.ryOSBuildTime);
   const isXpTheme = currentTheme === "xp" || currentTheme === "win98";
   const [versionDisplayMode, setVersionDisplayMode] = useState(0); // 0: version, 1: commit, 2: date
+
+  // Get OS name from CV store (hook must be called unconditionally)
+  const cvOSName = useOSName(currentTheme);
+  const useCVBranding = getCVConfig().useCVForBranding;
+  const osName = useCVBranding ? cvOSName : getFullOSName(currentTheme);
 
   const memoryUsage = useMemo(() => {
     const totalMemory = 32; // 32MB total memory
@@ -91,16 +97,7 @@ export function AboutFinderDialog({
                     : "font-apple-garamond text-2xl "
                 )}
               >
-                ryOS
-                {currentTheme === "system7"
-                  ? " 7"
-                  : currentTheme === "macosx"
-                  ? " X"
-                  : currentTheme === "win98"
-                  ? " 98"
-                  : currentTheme === "xp"
-                  ? " XP"
-                  : ""}
+                {osName}
               </div>
               <div
                 className={cn(

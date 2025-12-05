@@ -7,6 +7,7 @@ import { useThemeStore } from "./stores/useThemeStore";
 import { useLanguageStore } from "./stores/useLanguageStore";
 import { preloadFileSystemData } from "./stores/useFilesStore";
 import { preloadIpodData } from "./stores/useIpodStore";
+import { useCvStore } from "./stores/useCvStore";
 import { initPrefetch } from "./utils/prefetch";
 import "./lib/i18n";
 import { primeReactResources } from "./lib/reactResources";
@@ -28,6 +29,10 @@ window.addEventListener("vite:preloadError", (event) => {
 // ============================================================================
 preloadFileSystemData();
 preloadIpodData();
+// Load CV data for dynamic OS branding (if VITE_USE_CV_FOR_BRANDING is true)
+if (import.meta.env.VITE_USE_CV_FOR_BRANDING === "true") {
+  useCvStore.getState().loadCV();
+}
 
 // ============================================================================
 // PREFETCHING - Cache icons, sounds, and app components after boot

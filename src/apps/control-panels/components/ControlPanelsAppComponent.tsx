@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import React from "react";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { themes } from "@/themes";
+import { getBaseOSName } from "@/lib/config";
 import { OsThemeId } from "@/themes/types";
 import { getTabStyles } from "@/utils/tabStyles";
 import { useLanguageStore, type LanguageCode } from "@/stores/useLanguageStore";
@@ -191,13 +192,13 @@ function VersionDisplay() {
     ryOSVersion: state.ryOSVersion,
     ryOSBuildNumber: state.ryOSBuildNumber,
   }));
-  
+
   const displayVersion = ryOSVersion || "...";
   const displayBuild = ryOSBuildNumber ? ` (${ryOSBuildNumber})` : "";
-  
+
   return (
     <p className="text-[11px] text-gray-600 font-geneva-12">
-      ryOS {displayVersion}{displayBuild}
+      {getBaseOSName()} {displayVersion}{displayBuild}
     </p>
   );
 }
@@ -1739,7 +1740,7 @@ export function ControlPanelsAppComponent({
                             @{username}
                           </span>
                           <span className="text-[11px] text-gray-600 font-geneva-12">
-                            {t("apps.control-panels.loggedInToRyOS")}
+                            {t("apps.control-panels.loggedInToRyOS", { osName: getBaseOSName() })}
                           </span>
                         </div>
                         <div className="flex gap-2">
@@ -1795,7 +1796,7 @@ export function ControlPanelsAppComponent({
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="text-[13px] font-geneva-12 font-medium">
-                            {t("apps.control-panels.ryOSAccount")}
+                            {t("apps.control-panels.ryOSAccount", { osName: getBaseOSName() })}
                           </span>
                           <span className="text-[11px] text-gray-600 font-geneva-12">
                             {t("apps.control-panels.loginToSendMessages")}
