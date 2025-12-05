@@ -693,7 +693,7 @@ export function ChatsAppComponent({
                       className="flex items-center gap-1 px-2 py-1 h-7"
                     >
                       <span className="font-geneva-12 text-[11px] text-orange-600 hover:text-orange-700">
-                        {t("apps.chats.status.loginToRyOS")}
+                        {t("apps.chats.status.loginToRyOS", { osName: getAIConfig().name })}
                       </span>
                     </Button>
                   )}
