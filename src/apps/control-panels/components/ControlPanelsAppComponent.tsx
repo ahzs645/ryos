@@ -1885,7 +1885,7 @@ export function ControlPanelsAppComponent({
                     {t("apps.control-panels.formatFileSystem")}
                   </Button>
                   <p className="text-[11px] text-gray-600 font-geneva-12">
-                    {t("apps.control-panels.formatFileSystemDescription")}
+                    {t("apps.control-panels.formatFileSystemDescription", { osName: getBaseOSName() })}
                   </p>
                 </div>
 
@@ -2098,14 +2098,14 @@ export function ControlPanelsAppComponent({
           onOpenChange={setIsConfirmResetOpen}
           onConfirm={handleConfirmReset}
           title={t("common.system.resetAllSettings")}
-          description={t("common.system.resetAllSettingsDesc")}
+          description={t("common.system.resetAllSettingsDesc", { osName: getBaseOSName() })}
         />
         <ConfirmDialog
           isOpen={isConfirmFormatOpen}
           onOpenChange={setIsConfirmFormatOpen}
           onConfirm={handleConfirmFormat}
           title={t("common.system.formatFileSystem")}
-          description={t("common.system.formatFileSystemDesc")}
+          description={t("common.system.formatFileSystemDesc", { osName: getBaseOSName() })}
         />
         {/* Sign Up Dialog (was SetUsernameDialog) */}
         <LoginDialog

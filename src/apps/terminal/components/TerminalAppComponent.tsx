@@ -42,6 +42,7 @@ import { useFilesStore } from "@/stores/useFilesStore";
 import { useThemeStore } from "@/stores/useThemeStore";
 import EmojiAquarium from "@/components/shared/EmojiAquarium";
 import i18n from "@/lib/i18n";
+import { getAIConfig } from "@/lib/config";
 
 // Import new components and utilities
 import { CommandHistory, CommandContext, ToolInvocationData } from "../types";
@@ -2112,7 +2113,7 @@ export function TerminalAppComponent({
         setCommandHistory([
           {
             command: "",
-            output: i18n.t("apps.terminal.output.chatCleared"),
+            output: i18n.t("apps.terminal.output.chatCleared", { aiHandle: getAIConfig().handle }),
             path: "ai-assistant",
           },
         ]);
@@ -2827,18 +2828,7 @@ export function TerminalAppComponent({
       <AboutDialog
         isOpen={isAboutDialogOpen}
         onOpenChange={setIsAboutDialogOpen}
-        metadata={
-          appMetadata || {
-            name: "Terminal",
-            version: "1.0",
-            creator: {
-              name: "Ryo Lu",
-              url: "https://ryo.lu",
-            },
-            github: "https://github.com/ryokun6/ryos",
-            icon: "/icons/default/terminal.png",
-          }
-        }
+        metadata={appMetadata}
         appId="terminal"
       />
     </>

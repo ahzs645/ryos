@@ -1,3 +1,9 @@
+import { getCreatorConfig, getOSConfig, getAIConfig } from "@/lib/config";
+
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
+const aiConfig = getAIConfig();
+
 export const helpItems = [
   {
     icon: "💻",
@@ -21,7 +27,7 @@ export const helpItems = [
     icon: "🤖",
     title: "AI Assistant",
     description:
-      'Type "ryo &lt;prompt&gt;" to chat with Ryo AI directly inside the terminal.',
+      `Type "${aiConfig.handle} <prompt>" to chat with ${aiConfig.name} AI directly inside the terminal.`,
   },
   {
     icon: "📝",
@@ -41,9 +47,9 @@ export const appMetadata = {
   name: "Terminal",
   version: "1.0",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/default/terminal.png",
 };

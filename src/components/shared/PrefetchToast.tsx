@@ -3,6 +3,7 @@
  */
 
 import { useTranslation } from "react-i18next";
+import { getBaseOSName } from "@/lib/config";
 
 interface PrefetchToastProps {
   phase: string;
@@ -60,7 +61,7 @@ export function PrefetchCompleteToast({ version, buildNumber }: PrefetchComplete
   
   return (
     <div className="text-sm">
-      {t("common.toast.updateReady", { version, buildNumber })}
+      {t("common.toast.updateReady", { osName: getBaseOSName(), version, buildNumber })}
     </div>
   );
 }

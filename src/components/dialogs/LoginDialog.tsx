@@ -15,6 +15,7 @@ import { useThemeStore } from "@/stores/useThemeStore";
 import { cn } from "@/lib/utils";
 import { getTabStyles } from "@/utils/tabStyles";
 import { useTranslation } from "react-i18next";
+import { getBaseOSName } from "@/lib/config";
 
 interface LoginDialogProps {
   /* Common */
@@ -68,7 +69,7 @@ export function LoginDialog({
   const isXpTheme = currentTheme === "xp" || currentTheme === "win98";
   const tabStyles = getTabStyles(currentTheme);
   const { t } = useTranslation();
-  const dialogTitle = t("common.auth.dialogTitle");
+  const dialogTitle = t("common.auth.dialogTitle", { osName: getBaseOSName() });
 
   // Reset to the initial tab whenever the dialog is reopened
   useEffect(() => {

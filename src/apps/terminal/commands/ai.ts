@@ -4,6 +4,7 @@ import { useChatsStore } from "@/stores/useChatsStore";
 import { track } from "@vercel/analytics";
 import { TERMINAL_ANALYTICS } from "@/utils/analytics";
 import i18n from "@/lib/i18n";
+import { getAIConfig } from "@/lib/config";
 
 export const aiCommand: Command = {
   name: "ai",
@@ -34,13 +35,13 @@ export const aiCommand: Command = {
       terminalStore.setInitialAiPrompt(initialPrompt);
 
       return {
-        output: i18n.t("apps.terminal.output.askRyoWithPrompt", { prompt: initialPrompt }),
+        output: i18n.t("apps.terminal.output.askRyoWithPrompt", { aiHandle: getAIConfig().handle, prompt: initialPrompt }),
         isError: false,
       };
     }
 
     return {
-      output: i18n.t("apps.terminal.output.askRyoAnything"),
+      output: i18n.t("apps.terminal.output.askRyoAnything", { aiHandle: getAIConfig().handle }),
       isError: false,
     };
   },
