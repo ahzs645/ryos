@@ -10,8 +10,14 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Determine base path for GitHub Pages deployment
+const isGitHubPages = process.env.VITE_STATIC_DEPLOY === "true";
+
 // https://vite.dev/config/
 export default defineConfig({
+  // Set base path for GitHub Pages (/<repo-name>/)
+  // For custom domains, this can be set to "/" via environment variable
+  base: isGitHubPages ? "/ryos/" : "/",
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
     cors: { origin: ["*"] },
@@ -43,20 +49,20 @@ export default defineConfig({
         background_color: "#000000",
         display: "standalone",
         orientation: "any",
-        start_url: "/",
+        start_url: ".",
         icons: [
           {
-            src: "/icons/mac-192.png",
+            src: "icons/mac-192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/icons/mac-512.png",
+            src: "icons/mac-512.png",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "/icons/mac-512.png",
+            src: "icons/mac-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",

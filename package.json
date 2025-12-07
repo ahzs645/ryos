@@ -9,6 +9,7 @@
     "version:bump": "bun run scripts/generate-build-version.ts --bump",
     "prebuild": "bun run scripts/generate-build-version.ts",
     "build": "tsc -b && vite build && cp dist/sw.js dist/version.json .vercel/output/static/ && (cp dist/workbox-*.js .vercel/output/static/ 2>/dev/null || true)",
+    "build:pages": "tsc -b && VITE_STATIC_DEPLOY=true vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate:icons": "bun run scripts/generate-icon-manifest.ts",
