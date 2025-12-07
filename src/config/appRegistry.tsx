@@ -12,6 +12,7 @@ import type {
 import type { AppletViewerInitialData } from "@/apps/applet-viewer";
 import { useAppStore } from "@/stores/useAppStore";
 import { getFeatureFlags } from "@/lib/config";
+import { assetUrl } from "@/lib/utils";
 
 export type AppId = (typeof appIds)[number];
 
@@ -406,13 +407,15 @@ export const getEnabledAppIds = (): AppId[] => {
   return appIds.filter((id) => isAppEnabled(id));
 };
 
-// Helper function to get app icon path
+// Helper function to get app icon path (with base URL for static deployment)
 export const getAppIconPath = (appId: AppId): string => {
   const app = appRegistry[appId];
-  if (typeof app.icon === "string") {
-    return app.icon;
+  const iconPath = typeof app.icon === "string" ? app.icon : app.icon.src;
+  // Apply base URL for local icon paths
+  if (iconPath.startsWith("/")) {
+    return assetUrl(iconPath);
   }
-  return app.icon.src;
+  return iconPath;
 };
 
 // Helper function to get all apps except Finder (respects feature flags)

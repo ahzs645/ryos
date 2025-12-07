@@ -15,6 +15,8 @@
     "generate:icons": "bun run scripts/generate-icon-manifest.ts",
     "generate:wallpapers": "bun run scripts/generate-wallpaper-manifest.ts",
     "launch-kiosk": "bash scripts/launch-kiosk.sh",
+    "storybook": "storybook dev -p 6006 -s public",
+    "build-storybook": "storybook build -s public",
     "i18n:extract": "bun run scripts/extract-strings.ts",
     "i18n:sync": "bun run scripts/sync-translations.ts",
     "i18n:sync:dry-run": "bun run scripts/sync-translations.ts --dry-run",

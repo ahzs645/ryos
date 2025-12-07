@@ -114,10 +114,12 @@ export const ThemedIcon: React.FC<ThemedIconProps> = ({
   // Derive logical name for async theming only if inside /icons/ path.
   // Strip any query string to avoid duplicating cache-busting params downstream.
   const withoutQuery = resolved.split("?")[0];
-  const logical = withoutQuery.startsWith("/icons/")
-    ? withoutQuery
-        .replace("/icons/default/", "")
-        .replace(/^(?:\/icons\/[^/]+\/)/, "")
+  // Check if path contains /icons/ (may have base URL prefix like /ryos/icons/)
+  const iconsMatch = withoutQuery.match(/\/icons\/([^/]+)\/(.+)$/);
+  const logical = iconsMatch
+    ? iconsMatch[2] // Just the filename part
+    : withoutQuery.includes("/icons/")
+    ? withoutQuery.replace(/.*\/icons\/default\//, "").replace(/.*\/icons\/[^/]+\//, "")
     : withoutQuery;
 
   const themedPath = useIconPath(logical, themeOverride ?? currentTheme);
@@ -125,9 +127,10 @@ export const ThemedIcon: React.FC<ThemedIconProps> = ({
   // Keep it simple: if async path still pending, show resolved immediately. Avoid switching for remote URLs.
   const src = themedPath || resolved;
   const normalizedSrc = src.split("?")[0];
+  // Check if it's a themed variant (contains /icons/ but not /icons/default/)
   const isThemedVariant =
-    normalizedSrc.startsWith("/icons/") &&
-    !normalizedSrc.startsWith("/icons/default/");
+    normalizedSrc.includes("/icons/") &&
+    !normalizedSrc.includes("/icons/default/");
   const finalStyle =
     isSafariBrowser && isThemedVariant
       ? applySafariImageStabilizer(style)

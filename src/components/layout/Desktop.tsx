@@ -627,20 +627,22 @@ export function Desktop({
       } catch (err) {
         console.warn(`[Desktop] Failed to resolve icon for app ${appId}:`, err);
       }
-      return "/icons/default/application.png";
+      return assetUrl("/icons/default/application.png");
     }
-    
+
     // For file aliases, use stored icon or resolve from target
     if (shortcut.icon && shortcut.icon.trim() !== "") {
-      return shortcut.icon;
+      // Resolve stored icon path with base URL if it's a local path
+      return shortcut.icon.startsWith("/") ? assetUrl(shortcut.icon) : shortcut.icon;
     }
-    
+
     if (shortcut.aliasType === "file" && shortcut.aliasTarget) {
       const targetFile = fileStore.getItem(shortcut.aliasTarget);
-      return targetFile?.icon || "/icons/default/file.png";
+      const icon = targetFile?.icon || "/icons/default/file.png";
+      return icon.startsWith("/") ? assetUrl(icon) : icon;
     }
-    
-    return "/icons/default/file.png";
+
+    return assetUrl("/icons/default/file.png");
   };
 
   return (
@@ -701,7 +703,7 @@ export function Desktop({
             name={isXpTheme ? t("common.desktop.myComputer") : t("apps.finder.window.macintoshHd")}
             isDirectory={true}
             icon={
-              isXpTheme ? "/icons/default/pc.png" : "/icons/default/disk.png"
+              isXpTheme ? assetUrl("/icons/default/pc.png") : assetUrl("/icons/default/disk.png")
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -771,7 +773,7 @@ export function Desktop({
               isDirectory={false}
               icon={
                 isXpTheme && app.id === "pc"
-                  ? `/icons/${currentTheme}/games.png`
+                  ? assetUrl(`/icons/${currentTheme}/games.png`)
                   : getAppIconPath(app.id)
               }
               onClick={(e) => handleIconClick(app.id, e)}

@@ -24,6 +24,7 @@ import type { AppletViewerInitialData } from "@/apps/applet-viewer";
 import { RightClickMenu, MenuItem } from "@/components/ui/right-click-menu";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { requestCloseWindow } from "@/utils/windowUtils";
+import { assetUrl } from "@/lib/utils";
 import {
   AnimatePresence,
   motion,
@@ -890,16 +891,18 @@ function MacDock() {
           } else if (item.aliasType === "file" && item.aliasTarget) {
             // File alias - get icon from target file
             const targetFile = fileStore.getItem(item.aliasTarget);
-            icon = targetFile?.icon || "/icons/default/file.png";
+            const targetIcon = targetFile?.icon || "/icons/default/file.png";
+            icon = targetIcon.startsWith("/") ? assetUrl(targetIcon) : targetIcon;
           } else if (item.isDirectory) {
             // Directory - use folder icon
-            icon = item.icon || "/icons/directory.png";
+            const dirIcon = item.icon || "/icons/directory.png";
+            icon = dirIcon.startsWith("/") ? assetUrl(dirIcon) : dirIcon;
           } else if (item.icon) {
             // Use stored icon
-            icon = item.icon;
+            icon = item.icon.startsWith("/") ? assetUrl(item.icon) : item.icon;
           } else {
             // Default file icon
-            icon = "/icons/default/file.png";
+            icon = assetUrl("/icons/default/file.png");
           }
           
           return {
@@ -1327,7 +1330,7 @@ function MacDock() {
                   <IconButton
                     key="__applications__"
                     label={t("common.dock.applications")}
-                    icon="/icons/default/applications.png"
+                    icon={assetUrl("/icons/default/applications.png")}
                     idKey="__applications__"
                     onClick={() =>
                       focusFinderAtPathOrLaunch("/Applications", {

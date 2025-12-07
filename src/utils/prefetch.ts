@@ -385,8 +385,8 @@ async function runPrefetchWithToast(
   }
 }
 
-// Static assets that should be prefetched for UI theming
-const STATIC_ASSETS = [
+// Static assets that should be prefetched for UI theming (relative paths, resolved with assetUrl at runtime)
+const STATIC_ASSET_PATHS = [
   // Theme textures
   '/assets/brushed-metal.jpg',
   '/assets/button.svg',
@@ -514,16 +514,15 @@ async function fetchIconManifest(): Promise<IconManifest | null> {
  */
 function getIconUrlsFromManifest(manifest: IconManifest): string[] {
   const urls: string[] = [];
-  
+
   if (manifest.themes && typeof manifest.themes === 'object') {
     for (const [themeName, icons] of Object.entries(manifest.themes)) {
       if (Array.isArray(icons)) {
-        const prefix = themeName === 'default' ? '/icons/default/' : `/icons/${themeName}/`;
-        urls.push(...icons.map((icon: string) => `${prefix}${icon}`));
+        urls.push(...icons.map((icon: string) => assetUrl(`/icons/${themeName}/${icon}`)));
       }
     }
   }
-  
+
   return urls;
 }
 
@@ -542,14 +541,14 @@ function storeManifestTimestamp(manifest: IconManifest): void {
  * Get all UI sound URLs
  */
 function getSoundUrls(): string[] {
-  return UI_SOUNDS.map(sound => `/sounds/${sound}`);
+  return UI_SOUNDS.map(sound => assetUrl(`/sounds/${sound}`));
 }
 
 /**
  * Get all static asset URLs (textures, splash screens, etc.)
  */
 function getStaticAssetUrls(): string[] {
-  return STATIC_ASSETS;
+  return STATIC_ASSET_PATHS.map(path => assetUrl(path));
 }
 
 /**
