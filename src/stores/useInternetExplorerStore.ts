@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getBrowserConfig, getCreatorConfig } from "@/lib/config";
+import { getBrowserConfig } from "@/lib/config";
 
 // Define types
 export interface Favorite {
@@ -105,9 +105,6 @@ export const DEFAULT_TIMELINE: { [year: string]: string } = {
   "3000":
     "Omniverse civilization. Plastic physics. Infinite realms. Boundless cognition.",
 };
-
-// Get creator config for personalized favorites
-const creatorConfig = getCreatorConfig();
 
 export const DEFAULT_FAVORITES: Favorite[] = [
   {

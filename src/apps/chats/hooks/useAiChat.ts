@@ -1605,6 +1605,15 @@ export function useAiChat(onPromptSetUsername?: () => void) {
                 ] as AnyExtension[]);
 
                 const instanceId = launchApp("textedit", { multiWindow: true });
+                if (!instanceId) {
+                  addToolResult({
+                    tool: toolCall.toolName,
+                    toolCallId: toolCall.toolCallId,
+                    output: i18n.t("apps.chats.toolCalls.failedToOpenDocument"),
+                  });
+                  result = "";
+                  break;
+                }
                 await new Promise((resolve) => setTimeout(resolve, 100));
 
                 const textEditStore = useTextEditStore.getState();

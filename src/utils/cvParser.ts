@@ -48,7 +48,7 @@ export interface CVData {
     sections?: {
       experience?: CVExperience[];
       education?: CVEducation[];
-      [key: string]: unknown[];
+      [key: string]: unknown[] | undefined;
     };
   };
 }
