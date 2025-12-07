@@ -1,34 +1,7 @@
-@import url("/fonts/fonts.css");
+/* fonts.css is loaded via JavaScript in main.tsx for correct base URL handling */
 @import "./styles/themes.css";
 @import "tailwindcss";
 @config "../tailwind.config.js";
-
-/* Additional fonts not in fonts.css */
-@font-face {
-  font-family: "ArkPixel";
-  src: url("/fonts/fusion-pixel-12px-proportional-ja.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@supports not (font: -apple-system-body) {
-  @font-face {
-    font-family: "SerenityOS-Emoji";
-    src: url("/fonts/SerenityOS-Emoji.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-  }
-}
-
-@font-face {
-  font-family: "Geneva-9";
-  src: url("/fonts/geneva-9.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 @layer base {
   :root {
@@ -776,7 +749,7 @@ button.piano-key.piano-key[class*="bg-[#ff33ff]"] {
 :root[data-os-theme="system7"] [data-sonner-toast] button {
   font-size: 12px !important;
   border: 5px solid transparent !important;
-  border-image: url('/assets/button.svg') 30 stretch !important;
+  border-image: var(--asset-button) 30 stretch !important;
   background: transparent !important;
   box-shadow: none !important;
   border-radius: 0 !important;
@@ -784,7 +757,7 @@ button.piano-key.piano-key[class*="bg-[#ff33ff]"] {
 }
 
 :root[data-os-theme="system7"] [data-sonner-toast] button:active {
-  border-image: url('/assets/button-default.svg') 60 stretch !important;
+  border-image: var(--asset-button-default) 60 stretch !important;
 }
 
 
@@ -860,4 +833,25 @@ button.piano-key.piano-key[class*="bg-[#ff33ff]"] {
 
 :root[data-os-theme="win98"] [data-sonner-toast] button:active {
   box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px grey, inset -2px -2px #dfdfdf !important;
+}
+
+/* Utility classes for retro buttons - use CSS variables for GitHub Pages compatibility */
+.retro-button-border {
+  border: 5px solid transparent;
+  border-image: var(--asset-button) 30 stretch;
+}
+.retro-button-border:active,
+.retro-button-border:focus {
+  border-image: var(--asset-button-default) 60 stretch;
+}
+.player-button-border {
+  border: 1px solid transparent;
+  border-image: var(--asset-videos-switch) 1 fill;
+  border-image-slice: 1;
+}
+.retro-button-active {
+  border-image: var(--asset-button-default) 60 stretch;
+}
+.pattern-bg-7 {
+  background-image: var(--asset-pattern-7);
 }

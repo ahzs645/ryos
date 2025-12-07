@@ -15,6 +15,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import { loadWallpaperManifest } from "@/utils/wallpapers";
 import type { WallpaperManifest as WallpaperManifestType } from "@/utils/wallpapers";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 // Remove unused constants
 interface WallpaperItemProps {
@@ -37,7 +38,16 @@ function WallpaperItem({
   const { play: playClick } = useSound(Sounds.BUTTON_CLICK, 0.3);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isLoading, setIsLoading] = useState(isVideo);
-  const displayUrl = previewUrl || path;
+  // Resolve path with base URL for static assets
+  const resolvedPath = useMemo(() => {
+    const p = previewUrl || path;
+    // Pass through data URLs, blob URLs, and remote URLs
+    if (/^(https?:|data:|blob:|\/\/|indexeddb:)/i.test(p)) {
+      return p;
+    }
+    return assetUrl(p);
+  }, [previewUrl, path]);
+  const displayUrl = resolvedPath;
 
   const handleClick = () => {
     playClick();

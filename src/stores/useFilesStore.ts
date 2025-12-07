@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ensureIndexedDBInitialized, STORES } from "@/utils/indexedDB";
 import type { OsThemeId } from "@/themes/types";
 import { appRegistry } from "@/config/appRegistry";
+import { assetUrl } from "@/lib/utils";
 
 // Define the structure for a file system item (metadata)
 export interface FileSystemItem {
@@ -131,7 +132,7 @@ async function loadDefaultFiles(): Promise<FileSystemData> {
   // Start new fetch
   fileSystemDataPromise = (async () => {
     try {
-      const res = await fetch("/data/filesystem.json");
+      const res = await fetch(assetUrl("/data/filesystem.json"));
       const data = await res.json();
       cachedFileSystemData = data as FileSystemData;
       return cachedFileSystemData;
@@ -163,7 +164,7 @@ async function loadDefaultApplets(): Promise<{
   // Start new fetch
   appletsDataPromise = (async () => {
     try {
-      const res = await fetch("/data/applets.json");
+      const res = await fetch(assetUrl("/data/applets.json"));
       const data = await res.json();
       cachedAppletsData = { applets: data.applets || [] };
       return cachedAppletsData;

@@ -18,6 +18,7 @@ import { PrefetchToast, PrefetchCompleteToast } from "@/components/shared/Prefet
 import { useAppStore } from "@/stores/useAppStore";
 import { setNextBootMessage } from "@/utils/bootMessage";
 import i18n from "@/lib/i18n";
+import { assetUrl } from "@/lib/utils";
 
 // Storage key for manifest timestamp (for cache invalidation)
 const MANIFEST_KEY = 'ryos-manifest-timestamp';
@@ -103,7 +104,7 @@ export function clearPrefetchFlag(): void {
  */
 async function fetchServerVersion(): Promise<{ version: string; buildNumber: string; buildTime?: string } | null> {
   try {
-    const response = await fetch('/version.json', { 
+    const response = await fetch(assetUrl('/version.json'), {
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache',
@@ -499,7 +500,7 @@ interface IconManifest {
  */
 async function fetchIconManifest(): Promise<IconManifest | null> {
   try {
-    const response = await fetch('/icons/manifest.json');
+    const response = await fetch(assetUrl('/icons/manifest.json'));
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {

@@ -41,11 +41,7 @@ export function SoundSlot({
         variant="retro"
         className={`h-full w-full flex flex-col items-stretch justify-center relative p-2 md:p-2 group min-h-[106px] md:min-h-[110px] focus:outline-none focus:ring-0 ${
           isRecording ? "bg-destructive animate-pulse" : ""
-        } ${
-          isPlaying
-            ? "[border-image:url('/assets/button-default.svg')_60_stretch]"
-            : ""
-        }`}
+        } ${isPlaying ? "retro-button-active" : ""}`}
         onClick={onSlotClick}
       >
         {shouldShowWaveform && (

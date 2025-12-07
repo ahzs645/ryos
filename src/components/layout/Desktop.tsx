@@ -1,7 +1,7 @@
 import { AnyApp } from "@/apps/base/types";
 import { AppManagerState } from "@/apps/base/types";
 import { AppId } from "@/config/appRegistry";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { FileIcon } from "@/apps/finder/components/FileIcon";
 import { getAppIconPath } from "@/config/appRegistry";
 import { useWallpaper } from "@/hooks/useWallpaper";
@@ -16,6 +16,7 @@ import { STORES } from "@/utils/indexedDB";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { useTranslation } from "react-i18next";
 import { getTranslatedAppName } from "@/utils/i18n";
+import { assetUrl } from "@/lib/utils";
 
 interface DesktopStyles {
   backgroundImage?: string;
@@ -44,6 +45,16 @@ export function Desktop({
   const [selectedShortcutPath, setSelectedShortcutPath] = useState<string | null>(null);
   const { wallpaperSource, isVideoWallpaper } = useWallpaper();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Resolve wallpaper path with base URL for static paths
+  const resolvedWallpaperSource = useMemo(() => {
+    // Pass through data URLs, blob URLs, and remote URLs
+    if (/^(https?:|data:|blob:|\/\/)/i.test(wallpaperSource)) {
+      return wallpaperSource;
+    }
+    // Apply base URL for local static assets
+    return assetUrl(wallpaperSource);
+  }, [wallpaperSource]);
   const [sortType, setSortType] = useState<SortType>("name");
   const [contextMenuPos, setContextMenuPos] = useState<{
     x: number;
@@ -385,7 +396,7 @@ export function Desktop({
   const getWallpaperStyles = (path: string): DesktopStyles => {
     if (!path || isVideoWallpaper) return {};
 
-    const isTiled = path.includes("/wallpapers/tiles/");
+    const isTiled = wallpaperSource.includes("/wallpapers/tiles/");
     return {
       backgroundImage: `url(${path})`,
       backgroundSize: isTiled ? "64px 64px" : "cover",
@@ -396,7 +407,7 @@ export function Desktop({
   };
 
   const finalStyles = {
-    ...getWallpaperStyles(wallpaperSource),
+    ...getWallpaperStyles(resolvedWallpaperSource),
     ...desktopStyles,
   };
 
@@ -651,7 +662,7 @@ export function Desktop({
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover z-[-10]"
-        src={wallpaperSource}
+        src={resolvedWallpaperSource}
         autoPlay
         loop
         muted

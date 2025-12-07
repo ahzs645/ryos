@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactPlayer from "react-player";
-import { cn } from "@/lib/utils";
+import { cn, assetUrl } from "@/lib/utils";
 import { AppProps, VideosInitialData } from "../../base/types";
 import { WindowFrame } from "@/components/layout/WindowFrame";
 import { VideosMenuBar } from "./VideosMenuBar";
@@ -1258,7 +1258,7 @@ export function VideosAppComponent({
                       disabled={videos.length === 0}
                     >
                       <img
-                        src="/assets/videos/prev.png"
+                        src={assetUrl("/assets/videos/prev.png")}
                         alt={t("apps.videos.menu.previous")}
                         width={32}
                         height={22}
@@ -1274,11 +1274,11 @@ export function VideosAppComponent({
                       disabled={videos.length === 0}
                     >
                       <img
-                        src={
+                        src={assetUrl(
                           isPlaying
                             ? "/assets/videos/pause.png"
                             : "/assets/videos/play.png"
-                        }
+                        )}
                         alt={isPlaying ? t("apps.videos.menu.pause") : t("apps.videos.menu.play")}
                         width={50}
                         height={22}
@@ -1294,7 +1294,7 @@ export function VideosAppComponent({
                       disabled={videos.length === 0}
                     >
                       <img
-                        src="/assets/videos/next.png"
+                        src={assetUrl("/assets/videos/next.png")}
                         alt={t("apps.videos.menu.next")}
                         width={32}
                         height={22}

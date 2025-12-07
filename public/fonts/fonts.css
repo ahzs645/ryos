@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "ChicagoKare";
-  src: url("/fonts/ChicagoKare-Regular.woff") format("woff");
+  src: url("./ChicagoKare-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "ArkPixel";
-  src: url("/fonts/fusion-pixel-12px-proportional-ja.woff2") format("woff2");
+  src: url("./fusion-pixel-12px-proportional-ja.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -19,7 +19,7 @@
 @supports not (font: -apple-system-body) {
   @font-face {
     font-family: "SerenityOS-Emoji";
-    src: url("/fonts/SerenityOS-Emoji.ttf") format("truetype");
+    src: url("./SerenityOS-Emoji.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -28,7 +28,15 @@
 
 @font-face {
   font-family: "Geneva-12";
-  src: url("/fonts/geneva-12.otf") format("opentype");
+  src: url("./geneva-12.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geneva-9";
+  src: url("./geneva-9.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -36,7 +44,7 @@
 
 @font-face {
   font-family: "AppleGaramond";
-  src: url("/fonts/AppleGaramond-Light.ttf") format("truetype");
+  src: url("./AppleGaramond-Light.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -44,7 +52,7 @@
 
 @font-face {
   font-family: "Monaco";
-  src: url("/fonts/monacottf.otf") format("opentype");
+  src: url("./monacottf.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -52,7 +60,7 @@
 
 @font-face {
   font-family: "Mondwest";
-  src: url("/fonts/Mondwest-Regular.woff2") format("woff2");
+  src: url("./Mondwest-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -60,7 +68,7 @@
 
 @font-face {
   font-family: "Mondwest";
-  src: url("/fonts/Mondwest-Bold.woff2") format("woff2");
+  src: url("./Mondwest-Bold.woff2") format("woff2");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -68,7 +76,7 @@
 
 @font-face {
   font-family: "NeueBit";
-  src: url("/fonts/NeueBit-Regular.woff2") format("woff2");
+  src: url("./NeueBit-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -77,7 +85,7 @@
 
 @font-face {
   font-family: "NeueBit";
-  src: url("/fonts/NeueBit-Bold.woff2") format("woff2");
+  src: url("./NeueBit-Bold.woff2") format("woff2");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -85,7 +93,7 @@
 
 @font-face {
   font-family: "Jacquard";
-  src: url("/fonts/Jacquard12-Regular.ttf") format("truetype");
+  src: url("./Jacquard12-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -93,7 +101,7 @@
 
 @font-face {
   font-family: "Apple Garamond";
-  src: url("/fonts/AppleGaramond.woff2") format("woff2");
+  src: url("./AppleGaramond.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -101,7 +109,7 @@
 
 @font-face {
   font-family: "LucidaGrande";
-  src: url("/fonts/LucidaGrande.ttf") format("truetype");
+  src: url("./LucidaGrande.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -109,7 +117,7 @@
 
 @font-face {
   font-family: "LucidaGrande";
-  src: url("/fonts/LucidaGrande-Bold.ttf") format("truetype");
+  src: url("./LucidaGrande-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
