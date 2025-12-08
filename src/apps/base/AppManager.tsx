@@ -385,6 +385,10 @@ export function AppManager({ apps }: AppManagerProps) {
           launchApp(appId, initialData);
         }}
         appStates={{ windowOrder: instanceOrder, apps: legacyAppStates }}
+        onClick={() => {
+          // Clicking on desktop unfocuses all windows
+          bringInstanceToForeground("");
+        }}
       />
     </AppContext.Provider>
   );
