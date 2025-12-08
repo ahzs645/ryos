@@ -19,7 +19,7 @@ import { useAiChat } from "@/apps/chats/hooks/useAiChat";
 import { useAppContext } from "@/contexts/AppContext";
 import { useAppStore } from "@/stores/useAppStore";
 import { useTerminalSounds } from "@/hooks/useTerminalSounds";
-import { track } from "@vercel/analytics";
+import { track } from "@/utils/analytics";
 import HtmlPreview, {
   isHtmlCodeBlock,
   extractHtmlContent,

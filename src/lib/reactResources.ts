@@ -21,11 +21,10 @@ const FONT_RESOURCES: FontResource[] = [
   { href: assetUrl("/fonts/Mondwest-Regular.woff2"), type: "font/woff2" },
 ];
 
-const FETCH_RESOURCES: FetchResource[] = [
-  { href: assetUrl("/data/filesystem.json"), priority: "high" },
-  { href: assetUrl("/data/applets.json") },
-  { href: assetUrl("/icons/manifest.json") },
-];
+// Note: Fetch resource preloads removed because they cause credential mode mismatches
+// with the actual fetch() calls, resulting in "preload not used" warnings.
+// The actual data fetching happens early in main.tsx anyway.
+const FETCH_RESOURCES: FetchResource[] = [];
 
 const PRECONNECT_RESOURCES = [
   "https://ws-us3.pusher.com",

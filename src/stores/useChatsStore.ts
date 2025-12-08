@@ -5,8 +5,7 @@ import {
   type ChatMessage,
   type AIChatMessage,
 } from "@/types/chat";
-import { track } from "@vercel/analytics";
-import { APP_ANALYTICS } from "@/utils/analytics";
+import { track, APP_ANALYTICS } from "@/utils/analytics";
 import i18n from "@/lib/i18n";
 import { getAIConfig } from "@/lib/config";
 

@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
-import { Analytics } from "@vercel/analytics/react";
 import "./index.css";
+
+// Only import Vercel Analytics when not in static deploy mode
+const isStaticDeploy = import.meta.env.VITE_STATIC_DEPLOY === "true";
 import { useThemeStore } from "./stores/useThemeStore";
 import { useLanguageStore } from "./stores/useLanguageStore";
 import { preloadFileSystemData } from "./stores/useFilesStore";
@@ -13,8 +15,10 @@ import "./lib/i18n";
 import { primeReactResources } from "./lib/reactResources";
 import { assetUrl, BASE_URL } from "./lib/utils";
 
-// Debug: Log the base URL to help diagnose GitHub Pages deployment issues
-console.log("[ryOS] BASE_URL:", BASE_URL, "| Full assetUrl test:", assetUrl("/test"));
+// Log base URL in development only
+if (import.meta.env.DEV) {
+  console.log("[ryOS] BASE_URL:", BASE_URL);
+}
 
 // Prime React 19 resource hints before anything else runs
 primeReactResources();
@@ -80,9 +84,25 @@ initPrefetch();
 useThemeStore.getState().hydrate();
 useLanguageStore.getState().hydrate();
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-    <Analytics />
-  </React.StrictMode>
-);
+// Dynamically import Analytics only for Vercel deployments
+const renderApp = async () => {
+  let Analytics: React.ComponentType | null = null;
+
+  if (!isStaticDeploy) {
+    try {
+      const module = await import("@vercel/analytics/react");
+      Analytics = module.Analytics;
+    } catch {
+      // Analytics not available, continue without it
+    }
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <App />
+      {Analytics && <Analytics />}
+    </React.StrictMode>
+  );
+};
+
+renderApp();

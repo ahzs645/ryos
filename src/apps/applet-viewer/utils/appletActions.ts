@@ -3,8 +3,7 @@ import { toast } from "sonner";
 import { useFileSystem } from "@/apps/finder/hooks/useFileSystem";
 import { useLaunchApp } from "@/hooks/useLaunchApp";
 import { useFilesStore } from "@/stores/useFilesStore";
-import { track } from "@vercel/analytics";
-import { APPLET_ANALYTICS } from "@/utils/analytics";
+import { track, APPLET_ANALYTICS } from "@/utils/analytics";
 
 export interface Applet {
   id: string;

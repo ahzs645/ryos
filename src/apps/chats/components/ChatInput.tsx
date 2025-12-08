@@ -7,7 +7,7 @@ import { AudioInputButton } from "@/components/ui/audio-input-button";
 import { useChatSynth } from "@/hooks/useChatSynth";
 import { useAppStoreShallow } from "@/stores/helpers";
 import { useSound, Sounds } from "@/hooks/useSound";
-import { track } from "@vercel/analytics";
+import { track } from "@/utils/analytics";
 import {
   Tooltip,
   TooltipContent,

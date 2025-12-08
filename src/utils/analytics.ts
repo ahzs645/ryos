@@ -1,14 +1,54 @@
 /**
- * Centralized analytics event constants
- * 
+ * Centralized analytics event constants and tracking wrapper
+ *
  * This file contains all analytics event names used throughout the application.
  * Events follow the pattern: `category:action` or `app:action`
- * 
+ *
  * Usage:
- *   import { track } from "@vercel/analytics";
- *   import { APP_ANALYTICS } from "@/utils/analytics";
+ *   import { track, APP_ANALYTICS } from "@/utils/analytics";
  *   track(APP_ANALYTICS.LAUNCH, { appId: "finder" });
  */
+
+// Check if we're in static deploy mode (GitHub Pages, etc.)
+const isStaticDeploy = import.meta.env.VITE_STATIC_DEPLOY === "true";
+
+// Type for analytics properties (matches Vercel's AllowedPropertyValues)
+type AnalyticsProperties = Record<string, string | number | boolean | null>;
+
+// Lazy-loaded track function from Vercel Analytics
+type TrackFn = (event: string, properties?: AnalyticsProperties) => void;
+let vercelTrack: TrackFn | null = null;
+let trackLoaded = false;
+
+/**
+ * Track an analytics event. No-op in static deployments.
+ * This is a drop-in replacement for `import { track } from "@vercel/analytics"`
+ */
+export const track = (event: string, properties?: AnalyticsProperties): void => {
+  // Skip analytics in static deployments
+  if (isStaticDeploy) return;
+
+  // If already loaded, use cached function
+  if (trackLoaded && vercelTrack) {
+    vercelTrack(event, properties);
+    return;
+  }
+
+  // Dynamically import Vercel Analytics
+  if (!trackLoaded) {
+    trackLoaded = true;
+    import("@vercel/analytics")
+      .then((module) => {
+        vercelTrack = module.track as TrackFn;
+        if (vercelTrack) {
+          vercelTrack(event, properties);
+        }
+      })
+      .catch(() => {
+        // Analytics not available, silently fail
+      });
+  }
+};
 
 // Core application events
 export const APP_ANALYTICS = {

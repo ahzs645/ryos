@@ -57,7 +57,8 @@ export default defineConfig({
         background_color: "#000000",
         display: "standalone",
         orientation: "any",
-        start_url: ".",
+        start_url: "./",
+        scope: "./",
         icons: [
           {
             src: "icons/mac-192.png",

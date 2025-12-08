@@ -1,8 +1,7 @@
 import { useState, useCallback } from "react";
 import { useChatsStore } from "@/stores/useChatsStore";
 import { toast } from "sonner";
-import { track } from "@vercel/analytics";
-import { APP_ANALYTICS } from "@/utils/analytics";
+import { track, APP_ANALYTICS } from "@/utils/analytics";
 
 export function useAuth() {
   const {

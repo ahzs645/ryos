@@ -28,9 +28,8 @@ import { useLibraryUpdateChecker } from "../hooks/useLibraryUpdateChecker";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { LyricsAlignment, KoreanDisplay } from "@/types/lyrics";
 import { isMobileSafari } from "@/utils/device";
-import { track } from "@vercel/analytics";
+import { track, IPOD_ANALYTICS } from "@/utils/analytics";
 import { getTranslatedAppName } from "@/utils/i18n";
-import { IPOD_ANALYTICS } from "@/utils/analytics";
 import { useOffline } from "@/hooks/useOffline";
 import { useTranslation } from "react-i18next";
 // Globe icon removed; using text label "Aあ" for translate

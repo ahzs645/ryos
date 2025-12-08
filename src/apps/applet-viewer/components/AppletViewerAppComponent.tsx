@@ -31,8 +31,7 @@ import {
 import { useFilesStore, FileSystemItem } from "@/stores/useFilesStore";
 import { generateAppletShareUrl } from "@/utils/sharedUrl";
 import { STORES } from "@/utils/indexedDB";
-import { track } from "@vercel/analytics";
-import { APPLET_ANALYTICS } from "@/utils/analytics";
+import { track, APPLET_ANALYTICS } from "@/utils/analytics";
 import { extractMetadataFromHtml } from "@/utils/appletMetadata";
 import { exportAppletAsHtml } from "@/utils/appletImportExport";
 import { useTranslation } from "react-i18next";
