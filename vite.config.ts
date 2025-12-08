@@ -11,17 +11,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Determine base path for GitHub Pages deployment
-// Check for various truthy values since env vars can be strings or booleans
-const isGitHubPages = process.env.VITE_STATIC_DEPLOY === "true" ||
-                      process.env.VITE_STATIC_DEPLOY === "1";
+// VITE_STATIC_DEPLOY enables static deployment mode
+// VITE_BASE_PATH allows overriding the base path (default: "/ryos/" for GH Pages, "/" for custom domains)
+const isStaticDeploy = process.env.VITE_STATIC_DEPLOY === "true" ||
+                       process.env.VITE_STATIC_DEPLOY === "1";
 
-console.log("[vite.config] VITE_STATIC_DEPLOY:", process.env.VITE_STATIC_DEPLOY, "isGitHubPages:", isGitHubPages);
+// Allow custom base path override, otherwise use /ryos/ for static deploy
+const basePath = process.env.VITE_BASE_PATH || (isStaticDeploy ? "/ryos/" : "/");
+
+console.log("[vite.config] VITE_STATIC_DEPLOY:", process.env.VITE_STATIC_DEPLOY, "VITE_BASE_PATH:", process.env.VITE_BASE_PATH, "basePath:", basePath);
 
 // https://vite.dev/config/
 export default defineConfig({
   // Set base path for GitHub Pages (/<repo-name>/)
-  // For custom domains, this can be set to "/" via environment variable
-  base: isGitHubPages ? "/ryos/" : "/",
+  // For custom domains, set VITE_BASE_PATH="/" to use root
+  base: basePath,
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
     cors: { origin: ["*"] },

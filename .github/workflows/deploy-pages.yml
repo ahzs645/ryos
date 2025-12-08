@@ -39,6 +39,9 @@ jobs:
         run: bun run build:pages
         env:
           VITE_STATIC_DEPLOY: "true"
+          # Use "/" for custom domain (projects.ahmadjalil.com)
+          # Use "/ryos/" for default GitHub Pages (username.github.io/ryos)
+          VITE_BASE_PATH: "/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
