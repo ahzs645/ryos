@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { useSound, Sounds } from "@/hooks/useSound";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 interface EditorToolbarProps {
   editor: Editor | null;
@@ -94,9 +95,9 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/bold-${
+                src={assetUrl(`/icons/default/text-editor/bold-${
                   editor?.isActive("bold") ? "depressed" : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.bold")}
                 className="w-[26px] h-[22px]"
               />
@@ -109,9 +110,9 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/italic-${
+                src={assetUrl(`/icons/default/text-editor/italic-${
                   editor?.isActive("italic") ? "depressed" : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.italic")}
                 className="w-[26px] h-[22px]"
               />
@@ -124,9 +125,9 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/underline-${
+                src={assetUrl(`/icons/default/text-editor/underline-${
                   editor?.isActive("underline") ? "depressed" : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.underline")}
                 className="w-[26px] h-[22px]"
               />
@@ -193,11 +194,11 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/align-left-${
+                src={assetUrl(`/icons/default/text-editor/align-left-${
                   editor?.isActive({ textAlign: "left" })
                     ? "depressed"
                     : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.alignLeft")}
                 className="w-[26px] h-[22px]"
               />
@@ -210,11 +211,11 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/align-center-${
+                src={assetUrl(`/icons/default/text-editor/align-center-${
                   editor?.isActive({ textAlign: "center" })
                     ? "depressed"
                     : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.alignCenter")}
                 className="w-[26px] h-[22px]"
               />
@@ -227,11 +228,11 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/align-right-${
+                src={assetUrl(`/icons/default/text-editor/align-right-${
                   editor?.isActive({ textAlign: "right" })
                     ? "depressed"
                     : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.alignRight")}
                 className="w-[26px] h-[22px]"
               />
@@ -251,9 +252,9 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/unordered-list-${
+                src={assetUrl(`/icons/default/text-editor/unordered-list-${
                   editor?.isActive("bulletList") ? "depressed" : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.bulletList")}
                 className="w-[26px] h-[22px]"
               />
@@ -266,9 +267,9 @@ export function EditorToolbar({
               className="w-[26px] h-[22px] flex items-center justify-center"
             >
               <img
-                src={`/icons/default/text-editor/ordered-list-${
+                src={assetUrl(`/icons/default/text-editor/ordered-list-${
                   editor?.isActive("orderedList") ? "depressed" : "off"
-                }.png`}
+                }.png`)}
                 alt={t("apps.textedit.numberedList")}
                 className="w-[26px] h-[22px]"
               />

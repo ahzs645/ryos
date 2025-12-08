@@ -11,7 +11,10 @@ import { useCvStore } from "./stores/useCvStore";
 import { initPrefetch } from "./utils/prefetch";
 import "./lib/i18n";
 import { primeReactResources } from "./lib/reactResources";
-import { assetUrl } from "./lib/utils";
+import { assetUrl, BASE_URL } from "./lib/utils";
+
+// Debug: Log the base URL to help diagnose GitHub Pages deployment issues
+console.log("[ryOS] BASE_URL:", BASE_URL, "| Full assetUrl test:", assetUrl("/test"));
 
 // Prime React 19 resource hints before anything else runs
 primeReactResources();

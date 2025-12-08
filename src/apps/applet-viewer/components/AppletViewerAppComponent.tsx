@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAppletUpdates } from "../hooks/useAppletUpdates";
 import { useAppletActions, type Applet } from "../utils/appletActions";
 import { toast } from "sonner";
+import { assetUrl } from "@/lib/utils";
 import {
   APPLET_AUTH_BRIDGE_SCRIPT,
   APPLET_AUTH_MESSAGE_TYPE,
@@ -706,7 +707,7 @@ export function AppletViewerAppComponent({
   const ensureMacFonts = (content: string): string => {
     if (!isMacTheme || !content) return content;
     // Ensure fonts.css is available and prefer Lucida Grande
-    const preload = `<link rel="stylesheet" href="/fonts/fonts.css">`;
+    const preload = `<link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">`;
     const fontStyle = `<style data-ryos-applet-font-fix>
       html,body{font-family:"LucidaGrande","Lucida Grande",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Noto Color Emoji",sans-serif!important}
       *{font-family:inherit!important}

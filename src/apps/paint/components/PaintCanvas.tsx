@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { motion } from "framer-motion";
 import { Filter } from "./PaintFiltersMenu";
+import { assetUrl } from "@/lib/utils";
 
 interface PaintCanvasProps {
   selectedTool: string;
@@ -354,7 +355,7 @@ export const PaintCanvas = forwardRef<PaintCanvasRef, PaintCanvasProps>(
         console.error("Error loading pattern:", e);
       };
 
-      img.src = `/patterns/Property 1=${patternNum}.svg`;
+      img.src = assetUrl(`/patterns/Property 1=${patternNum}.svg`);
     }, [selectedPattern]);
 
     useEffect(() => {

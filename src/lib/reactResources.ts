@@ -1,4 +1,5 @@
 import { preconnect, preload, preinit } from "react-dom";
+import { assetUrl } from "./utils";
 
 type FontResource = {
   href: string;
@@ -11,19 +12,19 @@ type FetchResource = {
   priority?: "low" | "high";
 };
 
-const STYLE_RESOURCES = ["/fonts/fonts.css"];
+const STYLE_RESOURCES = [assetUrl("/fonts/fonts.css")];
 
 const FONT_RESOURCES: FontResource[] = [
-  { href: "/fonts/ChicagoKare-Regular.woff", type: "font/woff", priority: "high" },
-  { href: "/fonts/fusion-pixel-12px-proportional-ja.woff2", type: "font/woff2" },
-  { href: "/fonts/geneva-12.otf", type: "font/otf", priority: "high" },
-  { href: "/fonts/Mondwest-Regular.woff2", type: "font/woff2" },
+  { href: assetUrl("/fonts/ChicagoKare-Regular.woff"), type: "font/woff", priority: "high" },
+  { href: assetUrl("/fonts/fusion-pixel-12px-proportional-ja.woff2"), type: "font/woff2" },
+  { href: assetUrl("/fonts/geneva-12.otf"), type: "font/otf", priority: "high" },
+  { href: assetUrl("/fonts/Mondwest-Regular.woff2"), type: "font/woff2" },
 ];
 
 const FETCH_RESOURCES: FetchResource[] = [
-  { href: "/data/filesystem.json", priority: "high" },
-  { href: "/data/applets.json" },
-  { href: "/icons/manifest.json" },
+  { href: assetUrl("/data/filesystem.json"), priority: "high" },
+  { href: assetUrl("/data/applets.json") },
+  { href: assetUrl("/icons/manifest.json") },
 ];
 
 const PRECONNECT_RESOURCES = [

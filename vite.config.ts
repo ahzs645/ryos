@@ -11,7 +11,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Determine base path for GitHub Pages deployment
-const isGitHubPages = process.env.VITE_STATIC_DEPLOY === "true";
+// Check for various truthy values since env vars can be strings or booleans
+const isGitHubPages = process.env.VITE_STATIC_DEPLOY === "true" ||
+                      process.env.VITE_STATIC_DEPLOY === "1";
+
+console.log("[vite.config] VITE_STATIC_DEPLOY:", process.env.VITE_STATIC_DEPLOY, "isGitHubPages:", isGitHubPages);
 
 // https://vite.dev/config/
 export default defineConfig({

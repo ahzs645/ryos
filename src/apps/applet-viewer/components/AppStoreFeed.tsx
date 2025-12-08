@@ -9,6 +9,7 @@ import {
   APPLET_AUTH_MESSAGE_TYPE,
 } from "@/utils/appletAuthBridge";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 interface AppStoreFeedProps {
   theme?: string;
@@ -66,7 +67,7 @@ export const AppStoreFeed = forwardRef<AppStoreFeedRef, AppStoreFeedProps>(
   const ensureMacFonts = (content: string): string => {
     if (!content) return content;
     
-    const preload = `<link rel="stylesheet" href="/fonts/fonts.css">`;
+    const preload = `<link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">`;
     const fontStyle = isMacTheme ? `<style data-ryos-applet-font-fix>
       html,body{font-family:"LucidaGrande","Lucida Grande",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Noto Color Emoji",sans-serif!important}
       *{font-family:inherit!important}

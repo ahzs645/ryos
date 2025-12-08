@@ -9,6 +9,7 @@ import { useAppletActions, type Applet } from "../utils/appletActions";
 import { AppStoreFeed, type AppStoreFeedRef } from "./AppStoreFeed";
 import { useTranslation } from "react-i18next";
 import { getAIConfig } from "@/lib/config";
+import { assetUrl } from "@/lib/utils";
 
 interface AppStoreProps {
   theme?: string;
@@ -246,7 +247,7 @@ export function AppStore({ theme, sharedAppletId, focusWindow }: AppStoreProps) 
   const ensureMacFonts = (content: string): string => {
     if (!isMacTheme || !content) return content;
     // Ensure fonts.css is available and prefer Lucida Grande
-    const preload = `<link rel="stylesheet" href="/fonts/fonts.css">`;
+    const preload = `<link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">`;
     const fontStyle = `<style data-ryos-applet-font-fix>
       html,body{font-family:"LucidaGrande","Lucida Grande",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Noto Color Emoji",sans-serif!important}
       *{font-family:inherit!important}

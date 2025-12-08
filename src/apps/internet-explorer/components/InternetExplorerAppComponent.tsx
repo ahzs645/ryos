@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ArrowLeft, ArrowRight, History, Search, Share } from "lucide-react";
+import { assetUrl } from "@/lib/utils";
 import { InputDialog } from "@/components/dialogs/InputDialog";
 import { HelpDialog } from "@/components/dialogs/HelpDialog";
 import { useTranslatedHelpItems } from "@/hooks/useTranslatedHelpItems";
@@ -2285,7 +2286,7 @@ export function InternetExplorerAppComponent({
                                 alt=""
                                 className="w-4 h-4"
                                 onError={(e) => {
-                                  e.currentTarget.src = "/icons/default/ie-site.png";
+                                  e.currentTarget.src = assetUrl("/icons/default/ie-site.png");
                                 }}
                               />
                             ) : (
@@ -2456,7 +2457,7 @@ export function InternetExplorerAppComponent({
                                       alt=""
                                       className="w-4 h-4"
                                       onError={(e) => {
-                                        e.currentTarget.src = "/icons/default/ie-site.png";
+                                        e.currentTarget.src = assetUrl("/icons/default/ie-site.png");
                                       }}
                                     />
                                   ) : (
@@ -2506,7 +2507,7 @@ export function InternetExplorerAppComponent({
                                 alt="Site"
                                 className="w-4 h-4 mr-1"
                                 onError={(e) => {
-                                  e.currentTarget.src = "/icons/default/ie-site.png";
+                                  e.currentTarget.src = assetUrl("/icons/default/ie-site.png");
                                 }}
                               />
                             ) : (

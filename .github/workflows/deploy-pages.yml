@@ -38,7 +38,7 @@ jobs:
       - name: Build for GitHub Pages
         run: bun run build:pages
         env:
-          VITE_STATIC_DEPLOY: true
+          VITE_STATIC_DEPLOY: "true"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

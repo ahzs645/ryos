@@ -1,5 +1,6 @@
 import React from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { assetUrl } from "@/lib/utils";
 
 interface PaintPatternPaletteProps {
   selectedPattern: string;
@@ -25,7 +26,7 @@ export const PaintPatternPalette: React.FC<PaintPatternPaletteProps> = ({
             onClick={() => onPatternSelect(`pattern-${num}`)}
           >
             <img
-              src={`/patterns/Property 1=${num}.svg`}
+              src={assetUrl(`/patterns/Property 1=${num}.svg`)}
               alt={`Pattern ${num}`}
               className="w-full h-full object-cover"
             />
