@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WallpaperPicker } from "./WallpaperPicker";
-import { ScreenSaverPicker } from "./ScreenSaverPicker";
 import { AppProps, ControlPanelsInitialData } from "@/apps/base/types";
 import { clearAllAppStates } from "@/stores/useAppStore";
 import { ensureIndexedDBInitialized } from "@/utils/indexedDB";
@@ -38,8 +37,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import React from "react";
 import { useThemeStore } from "@/stores/useThemeStore";
-import { getApiUrl } from "@/utils/platform";
 import { themes } from "@/themes";
+import { getBaseOSName } from "@/lib/config";
 import { OsThemeId } from "@/themes/types";
 import { getTabStyles } from "@/utils/tabStyles";
 import { useLanguageStore, type LanguageCode } from "@/stores/useLanguageStore";
@@ -189,46 +188,17 @@ const base64ToBlob = (dataUrl: string): Blob => {
 
 // Version display component that reads from app store
 function VersionDisplay() {
-  const { t } = useTranslation();
   const { ryOSVersion, ryOSBuildNumber } = useAppStoreShallow((state) => ({
     ryOSVersion: state.ryOSVersion,
     ryOSBuildNumber: state.ryOSBuildNumber,
   }));
-  const [desktopVersion, setDesktopVersion] = React.useState<string | null>(null);
-  const isMac = React.useMemo(() => 
-    typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('mac'), 
-    []
-  );
-  
-  // Fetch desktop version for download link
-  React.useEffect(() => {
-    if (isMac) {
-      fetch('/version.json', { cache: 'no-store' })
-        .then(res => res.json())
-        .then(data => setDesktopVersion(data.desktopVersion))
-        .catch(() => setDesktopVersion('1.0.1')); // fallback
-    }
-  }, [isMac]);
-  
+
   const displayVersion = ryOSVersion || "...";
-  const displayBuild = ryOSBuildNumber ? ` (Build ${ryOSBuildNumber})` : "";
-  
+  const displayBuild = ryOSBuildNumber ? ` (${ryOSBuildNumber})` : "";
+
   return (
     <p className="text-[11px] text-gray-600 font-geneva-12">
-      ryOS {displayVersion}{displayBuild}
-      {isMac && desktopVersion && (
-        <>
-          {" · "}
-          <a 
-            href={`https://github.com/ryokun6/ryos/releases/download/v${desktopVersion}/ryOS_${desktopVersion}_aarch64.dmg`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            {t("apps.control-panels.downloadMacApp")}
-          </a>
-        </>
-      )}
+      {getBaseOSName()} {displayVersion}{displayBuild}
     </p>
   );
 }
@@ -410,7 +380,7 @@ export function ControlPanelsAppComponent({
         return;
       }
 
-      const response = await fetch(getApiUrl("/api/chat-rooms?action=logoutAllDevices"), {
+      const response = await fetch("/api/chat-rooms?action=logoutAllDevices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1085,37 +1055,37 @@ export function ControlPanelsAppComponent({
                     path: "/Documents",
                     name: "Documents",
                     type: "directory",
-                    icon: "/icons/default/documents.png",
+                    icon: "/icons/documents.png",
                   },
                   {
                     path: "/Images",
                     name: "Images",
                     type: "directory",
-                    icon: "/icons/default/images.png",
+                    icon: "/icons/images.png",
                   },
                   {
                     path: "/Applications",
                     name: "Applications",
                     type: "directory-virtual",
-                    icon: "/icons/default/applications.png",
+                    icon: "/icons/applications.png",
                   },
                   {
                     path: "/Music",
                     name: "Music",
                     type: "directory-virtual",
-                    icon: "/icons/default/sounds.png",
+                    icon: "/icons/sounds.png",
                   },
                   {
                     path: "/Videos",
                     name: "Videos",
                     type: "directory-virtual",
-                    icon: "/icons/default/movies.png",
+                    icon: "/icons/movies.png",
                   },
                   {
                     path: "/Sites",
                     name: "Sites",
                     type: "directory-virtual",
-                    icon: "/icons/default/sites.png",
+                    icon: "/icons/sites.png",
                   },
                   {
                     path: "/Applets",
@@ -1124,16 +1094,10 @@ export function ControlPanelsAppComponent({
                     icon: "/icons/default/applets.png",
                   },
                   {
-                    path: "/Desktop",
-                    name: "Desktop",
-                    type: "directory",
-                    icon: "/icons/default/desktop.png",
-                  },
-                  {
                     path: "/Trash",
                     name: "Trash",
                     type: "directory",
-                    icon: "/icons/default/trash-empty.png",
+                    icon: "/icons/trash-empty.png",
                   },
                 ];
 
@@ -1177,7 +1141,7 @@ export function ControlPanelsAppComponent({
                           path,
                           value.name,
                           type,
-                          "/icons/default/file-text.png",
+                          "/icons/file-text.png",
                           key
                         );
                         count++;
@@ -1218,7 +1182,7 @@ export function ControlPanelsAppComponent({
                           path,
                           value.name,
                           ext,
-                          "/icons/default/image.png",
+                          "/icons/image.png",
                           key
                         );
                         count++;
@@ -1664,8 +1628,6 @@ export function ControlPanelsAppComponent({
                   </Select>
                 </div>
 
-                <ScreenSaverPicker />
-
                 <div
                   className="border-t my-4"
                   style={tabStyles.separatorStyle}
@@ -1778,7 +1740,7 @@ export function ControlPanelsAppComponent({
                             @{username}
                           </span>
                           <span className="text-[11px] text-gray-600 font-geneva-12">
-                            {t("apps.control-panels.loggedInToRyOS")}
+                            {t("apps.control-panels.loggedInToRyOS", { osName: getBaseOSName() })}
                           </span>
                         </div>
                         <div className="flex gap-2">
@@ -1834,7 +1796,7 @@ export function ControlPanelsAppComponent({
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="text-[13px] font-geneva-12 font-medium">
-                            {t("apps.control-panels.ryOSAccount")}
+                            {t("apps.control-panels.ryOSAccount", { osName: getBaseOSName() })}
                           </span>
                           <span className="text-[11px] text-gray-600 font-geneva-12">
                             {t("apps.control-panels.loginToSendMessages")}
@@ -1923,7 +1885,7 @@ export function ControlPanelsAppComponent({
                     {t("apps.control-panels.formatFileSystem")}
                   </Button>
                   <p className="text-[11px] text-gray-600 font-geneva-12">
-                    {t("apps.control-panels.formatFileSystemDescription")}
+                    {t("apps.control-panels.formatFileSystemDescription", { osName: getBaseOSName() })}
                   </p>
                 </div>
 
@@ -2136,14 +2098,14 @@ export function ControlPanelsAppComponent({
           onOpenChange={setIsConfirmResetOpen}
           onConfirm={handleConfirmReset}
           title={t("common.system.resetAllSettings")}
-          description={t("common.system.resetAllSettingsDesc")}
+          description={t("common.system.resetAllSettingsDesc", { osName: getBaseOSName() })}
         />
         <ConfirmDialog
           isOpen={isConfirmFormatOpen}
           onOpenChange={setIsConfirmFormatOpen}
           onConfirm={handleConfirmFormat}
           title={t("common.system.formatFileSystem")}
-          description={t("common.system.formatFileSystemDesc")}
+          description={t("common.system.formatFileSystemDesc", { osName: getBaseOSName() })}
         />
         {/* Sign Up Dialog (was SetUsernameDialog) */}
         <LoginDialog

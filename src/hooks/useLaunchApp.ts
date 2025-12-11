@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores/useAppStore";
-import { AppId } from "@/config/appRegistry";
+import { AppId, isAppEnabled } from "@/config/appRegistry";
 
 // Export the interface
 export interface LaunchAppOptions {
@@ -18,6 +18,12 @@ export const useLaunchApp = () => {
   const restoreInstance = useAppStore((state) => state.restoreInstance);
 
   const launchApp = (appId: AppId, options?: LaunchAppOptions) => {
+    // Check if app is enabled based on feature flags
+    if (!isAppEnabled(appId)) {
+      console.warn(`[useLaunchApp] App ${appId} is disabled by feature flags`);
+      return null;
+    }
+
     console.log(`[useLaunchApp] Launch event received for ${appId}`, options);
 
     // Convert initialPath to proper initialData for Finder

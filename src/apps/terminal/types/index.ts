@@ -35,7 +35,7 @@ export interface CommandContext {
   playCommandSound: () => void;
   playErrorSound: () => void;
   playMooSound: () => void;
-  launchApp: (appId: any, options?: any) => string; // Use any for AppId to avoid import issues
+  launchApp: (appId: any, options?: any) => string | null; // Use any for AppId to avoid import issues
   setIsAboutDialogOpen: (isOpen: boolean) => void;
   username?: string | null;
 }

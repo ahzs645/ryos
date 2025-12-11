@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useIpodStore, type Track } from "@/stores/useIpodStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 const CHECK_INTERVAL = 5 * 60 * 1000; // Check every 5 minutes
 
@@ -29,7 +30,7 @@ export function useLibraryUpdateChecker(isActive: boolean) {
         const wasEmpty = currentTracks.length === 0;
 
         // Get server tracks directly (same as syncLibrary does)
-        const res = await fetch("/data/ipod-videos.json");
+        const res = await fetch(assetUrl("/data/ipod-videos.json"));
         const data = await res.json();
         const serverTracks: Track[] = (data.videos || data).map(
           (v: Record<string, unknown>) => ({

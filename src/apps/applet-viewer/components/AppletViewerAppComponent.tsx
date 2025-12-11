@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAppletUpdates } from "../hooks/useAppletUpdates";
 import { useAppletActions, type Applet } from "../utils/appletActions";
 import { toast } from "sonner";
-import { getApiUrl } from "@/utils/platform";
+import { assetUrl } from "@/lib/utils";
 import {
   APPLET_AUTH_BRIDGE_SCRIPT,
   APPLET_AUTH_MESSAGE_TYPE,
@@ -31,8 +31,7 @@ import {
 import { useFilesStore, FileSystemItem } from "@/stores/useFilesStore";
 import { generateAppletShareUrl } from "@/utils/sharedUrl";
 import { STORES } from "@/utils/indexedDB";
-import { track } from "@vercel/analytics";
-import { APPLET_ANALYTICS } from "@/utils/analytics";
+import { track, APPLET_ANALYTICS } from "@/utils/analytics";
 import { extractMetadataFromHtml } from "@/utils/appletMetadata";
 import { exportAppletAsHtml } from "@/utils/appletImportExport";
 import { useTranslation } from "react-i18next";
@@ -95,7 +94,7 @@ export function AppletViewerAppComponent({
   // Check for update for a specific applet by shareId
   const checkForAppletUpdate = useCallback(async (shareId: string) => {
     try {
-      const response = await fetch(getApiUrl("/api/share-applet?list=true"));
+      const response = await fetch("/api/share-applet?list=true");
       if (!response.ok) return null;
       
       const data = await response.json();
@@ -707,7 +706,7 @@ export function AppletViewerAppComponent({
   const ensureMacFonts = (content: string): string => {
     if (!isMacTheme || !content) return content;
     // Ensure fonts.css is available and prefer Lucida Grande
-    const preload = `<link rel="stylesheet" href="/fonts/fonts.css">`;
+    const preload = `<link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">`;
     const fontStyle = `<style data-ryos-applet-font-fix>
       html,body{font-family:"LucidaGrande","Lucida Grande",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Noto Color Emoji",sans-serif!important}
       *{font-family:inherit!important}
@@ -1146,7 +1145,7 @@ export function AppletViewerAppComponent({
       // Get current window dimensions to include in share
       const windowDimensions = currentWindowState?.size;
       
-      const response = await fetch(getApiUrl("/api/share-applet"), {
+      const response = await fetch("/api/share-applet", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1226,7 +1225,7 @@ export function AppletViewerAppComponent({
       
       const fetchSharedApplet = async () => {
         try {
-          const response = await fetch(getApiUrl(`/api/share-applet?id=${encodeURIComponent(shareCode)}`));
+          const response = await fetch(`/api/share-applet?id=${encodeURIComponent(shareCode)}`);
           
           if (!response.ok) {
             if (response.status === 404) {

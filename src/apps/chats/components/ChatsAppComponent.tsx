@@ -34,6 +34,7 @@ import { useThemeStore } from "@/stores/useThemeStore";
 import { useOffline } from "@/hooks/useOffline";
 import { checkOfflineAndShowError } from "@/utils/offline";
 import { useTranslation } from "react-i18next";
+import { getAIConfig } from "@/lib/config";
 
 // Define the expected message structure locally, matching ChatMessages internal type
 interface DisplayMessage extends Omit<AIChatMessage, "role"> {
@@ -512,7 +513,7 @@ export function ChatsAppComponent({
     : messages.map((msg: AIChatMessage) => ({
         ...msg,
         // metadata with createdAt is already present from AIChatMessage
-        username: msg.role === "user" ? username || "You" : "Ryo",
+        username: msg.role === "user" ? username || "You" : getAIConfig().name,
       }));
 
   return (
@@ -524,7 +525,7 @@ export function ChatsAppComponent({
             ? currentRoom.type === "private"
               ? getPrivateRoomDisplayName(currentRoom, username)
               : `#${currentRoom.name}`
-            : "@ryo"
+            : `@${getAIConfig().handle}`
         }
         onClose={onClose}
         isForeground={isForeground}
@@ -670,7 +671,7 @@ export function ChatsAppComponent({
                         ? currentRoom.type === "private"
                           ? getPrivateRoomDisplayName(currentRoom, username)
                           : `#${currentRoom.name}`
-                        : "@ryo"}
+                        : `@${getAIConfig().handle}`}
                     </h2>
                     <ChevronDown className="h-3 w-3 transform transition-transform duration-200 text-neutral-400" />
                   </Button>
@@ -692,7 +693,7 @@ export function ChatsAppComponent({
                       className="flex items-center gap-1 px-2 py-1 h-7"
                     >
                       <span className="font-geneva-12 text-[11px] text-orange-600 hover:text-orange-700">
-                        {t("apps.chats.status.loginToRyOS")}
+                        {t("apps.chats.status.loginToRyOS", { osName: getAIConfig().name })}
                       </span>
                     </Button>
                   )}

@@ -1,14 +1,18 @@
 import { BaseApp } from "../base/types";
 import { PcAppComponent } from "./components/PcAppComponent";
+import { getCreatorConfig, getOSConfig } from "@/lib/config";
+
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
 
 export const appMetadata = {
   name: "Virtual PC",
   version: "1.0.0",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/default/pc.png",
 };
 

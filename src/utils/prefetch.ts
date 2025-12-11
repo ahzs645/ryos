@@ -18,7 +18,7 @@ import { PrefetchToast, PrefetchCompleteToast } from "@/components/shared/Prefet
 import { useAppStore } from "@/stores/useAppStore";
 import { setNextBootMessage } from "@/utils/bootMessage";
 import i18n from "@/lib/i18n";
-import { getApiUrl, isTauri } from "@/utils/platform";
+import { assetUrl } from "@/lib/utils";
 
 // Storage key for manifest timestamp (for cache invalidation)
 const MANIFEST_KEY = 'ryos-manifest-timestamp';
@@ -98,26 +98,13 @@ export function clearPrefetchFlag(): void {
   }
 }
 
-export interface ServerVersion {
-  version: string;
-  buildNumber: string;
-  buildTime?: string;
-  desktopVersion?: string;
-}
-
 /**
  * Fetch version info from version.json
  * This is the single source of truth for version checking
- * @param forceRemote - If true, always fetch from production server (used for desktop update checks in Tauri)
  */
-async function fetchServerVersion(forceRemote: boolean = false): Promise<ServerVersion | null> {
+async function fetchServerVersion(): Promise<{ version: string; buildNumber: string; buildTime?: string } | null> {
   try {
-    // In Tauri, /version.json would fetch from the bundled app, not the live server.
-    // For desktop update checks, we need to fetch from the production server.
-    // Use getApiUrl() which returns the production URL in Tauri.
-    const url = forceRemote || isTauri() ? getApiUrl('/version.json') : '/version.json';
-    
-    const response = await fetch(url, { 
+    const response = await fetch(assetUrl('/version.json'), {
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache',
@@ -136,7 +123,6 @@ async function fetchServerVersion(forceRemote: boolean = false): Promise<ServerV
         version: data.version,
         buildNumber: data.buildNumber,
         buildTime: data.buildTime,
-        desktopVersion: data.desktopVersion,
       };
     }
     
@@ -148,70 +134,10 @@ async function fetchServerVersion(forceRemote: boolean = false): Promise<ServerV
   }
 }
 
-export interface DesktopUpdateResult {
-  type: 'first-time' | 'update' | 'none';
-  version: string | null;
-}
-
-/**
- * Check for desktop app updates
- * Returns info about whether this is a first time visit, update available, or no changes
- */
-export async function checkDesktopUpdate(): Promise<DesktopUpdateResult> {
-  const serverVersion = await fetchServerVersion();
-  if (!serverVersion?.desktopVersion) {
-    return { type: 'none', version: null };
-  }
-  
-  const lastSeenVersion = useAppStore.getState().lastSeenDesktopVersion;
-  
-  // If never seen before, this is the first time
-  if (!lastSeenVersion) {
-    return { type: 'first-time', version: serverVersion.desktopVersion };
-  }
-  
-  // Check if desktop version has changed
-  if (serverVersion.desktopVersion !== lastSeenVersion) {
-    return { type: 'update', version: serverVersion.desktopVersion };
-  }
-  
-  return { type: 'none', version: null };
-}
-
-// Callback for desktop update notifications (set by App.tsx)
-let desktopUpdateCallback: ((result: DesktopUpdateResult) => void) | null = null;
-
-/**
- * Register a callback to be called when a desktop update is found
- * Used by App.tsx to show the download toast
- */
-export function onDesktopUpdate(callback: (result: DesktopUpdateResult) => void): void {
-  desktopUpdateCallback = callback;
-}
-
-/**
- * Check for desktop updates and notify via callback
- * Called during periodic checks and manual "Check for Updates"
- */
-async function checkAndNotifyDesktopUpdate(): Promise<void> {
-  // Check for macOS users (both web and Tauri)
-  const isMacOS = typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('mac');
-  
-  if (!isMacOS) {
-    return;
-  }
-  
-  const result = await checkDesktopUpdate();
-  
-  if (result.type !== 'none' && desktopUpdateCallback) {
-    desktopUpdateCallback(result);
-  }
-}
-
 type CheckResult = 
   | { action: 'none' }  // Already up to date
-  | { action: 'first-time'; server: ServerVersion }
-  | { action: 'update'; server: ServerVersion };
+  | { action: 'first-time'; server: { version: string; buildNumber: string; buildTime?: string } }
+  | { action: 'update'; server: { version: string; buildNumber: string; buildTime?: string } };
 
 /**
  * Check what action is needed based on stored vs server version
@@ -287,13 +213,10 @@ async function checkAndUpdate(isManual: boolean = false): Promise<void> {
 /**
  * Force refresh cache and show update ready toast
  * Use this for manual "Check for Updates" action
- * Only shows reboot button if version is actually new
+ * Always clears cache and refetches, regardless of version
  */
 export async function forceRefreshCache(): Promise<void> {
   console.log('[Prefetch] Manual update check triggered...');
-  
-  // Also check for desktop updates when manually checking
-  await checkAndNotifyDesktopUpdate();
   
   if (isUpdateInProgress) {
     console.log('[Prefetch] Update already in progress, skipping');
@@ -307,26 +230,15 @@ export async function forceRefreshCache(): Promise<void> {
     return;
   }
   
-  const stored = getStoredVersion();
-  const isNewVersion = serverVersion.buildNumber !== stored.buildNumber;
-  
-  // If already on latest version, just show success message without reboot
-  if (!isNewVersion) {
-    toast.success('Already running the latest version', {
-      description: stored.version ? `ryOS ${stored.version} (${stored.buildNumber})` : undefined,
-    });
-    return;
-  }
-  
   isUpdateInProgress = true;
   
   try {
-    // Clear caches and refetch for new version
+    // Always clear caches for manual refresh
     toast.dismiss('prefetch-progress');
     clearPrefetchFlag();
     await clearAllCaches();
     
-    // Show update ready toast with reboot button (only for new versions)
+    // Always show update ready toast for manual refresh
     await runPrefetchWithToast(true, serverVersion);
   } finally {
     isUpdateInProgress = false;
@@ -341,7 +253,7 @@ export async function forceRefreshCache(): Promise<void> {
  */
 async function runPrefetchWithToast(
   showVersionToast: boolean,
-  server: ServerVersion
+  server: { version: string; buildNumber: string; buildTime?: string }
 ): Promise<void> {
   console.log('[Prefetch] Starting prefetch...');
   
@@ -473,8 +385,8 @@ async function runPrefetchWithToast(
   }
 }
 
-// Static assets that should be prefetched for UI theming
-const STATIC_ASSETS = [
+// Static assets that should be prefetched for UI theming (relative paths, resolved with assetUrl at runtime)
+const STATIC_ASSET_PATHS = [
   // Theme textures
   '/assets/brushed-metal.jpg',
   '/assets/button.svg',
@@ -588,7 +500,7 @@ interface IconManifest {
  */
 async function fetchIconManifest(): Promise<IconManifest | null> {
   try {
-    const response = await fetch('/icons/manifest.json');
+    const response = await fetch(assetUrl('/icons/manifest.json'));
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {
@@ -602,16 +514,15 @@ async function fetchIconManifest(): Promise<IconManifest | null> {
  */
 function getIconUrlsFromManifest(manifest: IconManifest): string[] {
   const urls: string[] = [];
-  
+
   if (manifest.themes && typeof manifest.themes === 'object') {
     for (const [themeName, icons] of Object.entries(manifest.themes)) {
       if (Array.isArray(icons)) {
-        const prefix = themeName === 'default' ? '/icons/default/' : `/icons/${themeName}/`;
-        urls.push(...icons.map((icon: string) => `${prefix}${icon}`));
+        urls.push(...icons.map((icon: string) => assetUrl(`/icons/${themeName}/${icon}`)));
       }
     }
   }
-  
+
   return urls;
 }
 
@@ -630,14 +541,14 @@ function storeManifestTimestamp(manifest: IconManifest): void {
  * Get all UI sound URLs
  */
 function getSoundUrls(): string[] {
-  return UI_SOUNDS.map(sound => `/sounds/${sound}`);
+  return UI_SOUNDS.map(sound => assetUrl(`/sounds/${sound}`));
 }
 
 /**
  * Get all static asset URLs (textures, splash screens, etc.)
  */
 function getStaticAssetUrls(): string[] {
-  return STATIC_ASSETS;
+  return STATIC_ASSET_PATHS.map(path => assetUrl(path));
 }
 
 /**
@@ -679,12 +590,7 @@ async function discoverAllJsChunks(): Promise<string[]> {
     // Find the main index bundle: /assets/index-XXXX.js
     const mainBundleMatch = html.match(/\/assets\/index-[A-Za-z0-9_-]+\.js/);
     if (!mainBundleMatch) {
-      // In development mode, Vite serves source directly (no bundled assets)
-      if (import.meta.env.DEV) {
-        console.log('[Prefetch] Skipping JS chunk discovery in development mode');
-      } else {
-        console.warn('[Prefetch] Could not find main bundle in index.html');
-      }
+      console.warn('[Prefetch] Could not find main bundle in index.html');
       return [];
     }
     
@@ -743,8 +649,6 @@ function startPeriodicUpdateCheck(): void {
   updateCheckIntervalId = setInterval(async () => {
     console.log('[Prefetch] Periodic update check...');
     await checkAndUpdate(false);
-    // Also check for desktop updates during periodic checks
-    await checkAndNotifyDesktopUpdate();
   }, UPDATE_CHECK_INTERVAL);
 }
 

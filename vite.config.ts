@@ -10,8 +10,22 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Determine base path for GitHub Pages deployment
+// VITE_STATIC_DEPLOY enables static deployment mode
+// VITE_BASE_PATH allows overriding the base path (default: "/ryos/" for GH Pages, "/" for custom domains)
+const isStaticDeploy = process.env.VITE_STATIC_DEPLOY === "true" ||
+                       process.env.VITE_STATIC_DEPLOY === "1";
+
+// Allow custom base path override, otherwise use /ryos/ for static deploy
+const basePath = process.env.VITE_BASE_PATH || (isStaticDeploy ? "/ryos/" : "/");
+
+console.log("[vite.config] VITE_STATIC_DEPLOY:", process.env.VITE_STATIC_DEPLOY, "VITE_BASE_PATH:", process.env.VITE_BASE_PATH, "basePath:", basePath);
+
 // https://vite.dev/config/
 export default defineConfig({
+  // Set base path for GitHub Pages (/<repo-name>/)
+  // For custom domains, set VITE_BASE_PATH="/" to use root
+  base: basePath,
   define: {
     // Expose VERCEL_ENV to the client for environment detection
     'import.meta.env.VITE_VERCEL_ENV': JSON.stringify(process.env.VERCEL_ENV || ''),
@@ -72,20 +86,21 @@ export default defineConfig({
         background_color: "#000000",
         display: "standalone",
         orientation: "any",
-        start_url: "/",
+        start_url: "./",
+        scope: "./",
         icons: [
           {
-            src: "/icons/mac-192.png",
+            src: "icons/mac-192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/icons/mac-512.png",
+            src: "icons/mac-512.png",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "/icons/mac-512.png",
+            src: "icons/mac-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
@@ -291,7 +306,7 @@ export default defineConfig({
         manualChunks: {
           // Core React - loaded immediately
           react: ["react", "react-dom"],
-          
+
           // UI primitives - loaded early
           "ui-core": [
             "@radix-ui/react-dialog",
@@ -308,22 +323,22 @@ export default defineConfig({
             "@radix-ui/react-checkbox",
             "@radix-ui/react-tabs",
           ],
-          
+
           // Heavy audio libs - deferred until Soundboard/iPod/Synth opens
           audio: ["tone", "wavesurfer.js", "audio-buffer-utils"],
-          
+
           // Media player - shared by iPod and Videos apps
           "media-player": ["react-player"],
-          
+
           // Chinese character conversion - large dictionary data, only needed for lyrics
           "opencc": ["opencc-js"],
-          
+
           // Korean romanization - only needed for lyrics
           "hangul": ["hangul-romanization"],
-          
-          // AI SDK - deferred until Chats/IE opens  
+
+          // AI SDK - deferred until Chats/IE opens
           "ai-sdk": ["ai", "@ai-sdk/anthropic", "@ai-sdk/google", "@ai-sdk/openai", "@ai-sdk/react"],
-          
+
           // Rich text editor - deferred until TextEdit opens
           // Note: @tiptap/pm is excluded because it only exports subpaths (e.g. @tiptap/pm/state)
           // and has no main entry point, which causes Vite to fail
@@ -337,19 +352,19 @@ export default defineConfig({
             "@tiptap/extension-underline",
             "@tiptap/suggestion",
           ],
-          
+
           // 3D rendering - deferred until PC app opens
           three: ["three"],
-          
+
           // Code highlighting - deferred until needed
           shiki: ["shiki"],
-          
+
           // Animation - used by multiple apps
           motion: ["framer-motion"],
-          
+
           // State management
           zustand: ["zustand"],
-          
+
           // Realtime chat
           pusher: ["pusher-js"],
         },

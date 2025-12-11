@@ -5,6 +5,18 @@ import { useLaunchApp } from "@/hooks/useLaunchApp";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useThemeStore } from "@/stores/useThemeStore";
+import { getOSConfig } from "@/lib/config";
+
+// Get the OS host for iPod link detection (e.g., "os.ryo.lu")
+const getOSHost = (): string => {
+  try {
+    const osUrl = getOSConfig().url;
+    const url = new URL(osUrl);
+    return url.hostname;
+  } catch {
+    return "os.ryo.lu"; // fallback
+  }
+};
 
 interface LinkMetadata {
   title?: string;
@@ -20,11 +32,13 @@ interface LinkPreviewProps {
 }
 
 export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
+  const osHost = getOSHost();
+  const ipodPathPattern = `${osHost}/ipod/`;
+
   // Helper function to check if URL is YouTube or iPod link
   const isYouTubeUrl = (url: string): boolean => {
-    return /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|os\.ryo\.lu\/ipod\/)/.test(
-      url
-    );
+    const ipodRegex = new RegExp(`${osHost.replace(/\./g, "\\.")}\\/ipod\\/`);
+    return /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/.test(url) || ipodRegex.test(url);
   };
 
   const [metadata, setMetadata] = useState<LinkMetadata | null>(null);
@@ -46,9 +60,10 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
       const validateId = (id: string | null) =>
         id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
 
-      // Handle os.ryo.lu/ipod/ links
-      if (url.includes("os.ryo.lu/ipod/")) {
-        const match = url.match(/os\.ryo\.lu\/ipod\/([^&\n?#]+)/);
+      // Handle iPod links
+      if (url.includes(ipodPathPattern)) {
+        const ipodRegex = new RegExp(`${osHost.replace(/\./g, "\\.")}\\/ipod\\/([^&\\n?#]+)`);
+        const match = url.match(ipodRegex);
         return validateId(match ? match[1] : null);
       }
 
@@ -85,8 +100,8 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
   // Helper function to get favicon URL
   const getFaviconUrl = (url: string): string => {
     try {
-      // For os.ryo.lu/ipod/ links, use YouTube favicon
-      if (url.includes("os.ryo.lu/ipod/")) {
+      // For iPod links, use YouTube favicon
+      if (url.includes(ipodPathPattern)) {
         return `https://www.google.com/s2/favicons?domain=youtube.com&sz=16`;
       }
 
@@ -142,7 +157,7 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
   const handleOpenYouTube = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     // For iPod links, construct YouTube URL from video ID
-    if (url.includes("os.ryo.lu/ipod/")) {
+    if (url.includes(ipodPathPattern)) {
       const videoId = extractYouTubeVideoId(url);
       if (videoId) {
         const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
@@ -166,8 +181,8 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
         setLoading(true);
         setError(null);
 
-        // Handle os.ryo.lu/ipod/ links specially - use YouTube metadata
-        if (url.includes("os.ryo.lu/ipod/")) {
+        // Handle iPod links specially - use YouTube metadata
+        if (url.includes(ipodPathPattern)) {
           const videoId = extractYouTubeVideoId(url);
           if (videoId) {
             // Fetch actual YouTube metadata for the video
@@ -250,7 +265,7 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
     };
 
     fetchMetadata();
-  }, [url]);
+  }, [url, ipodPathPattern]);
 
   if (loading) {
     return (
@@ -304,7 +319,7 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
 
     if (isYouTubeUrl(url)) {
       // For iPod links, main action is add to iPod
-      if (url.includes("os.ryo.lu/ipod/")) {
+      if (url.includes(ipodPathPattern)) {
         try {
           const videoId = extractYouTubeVideoId(url);
           if (videoId) {
@@ -423,7 +438,7 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
           {/* Action buttons */}
           <div className="px-2 pb-2">
             {isYouTubeUrl(url) ? (
-              url.includes("os.ryo.lu/ipod/") ? (
+              url.includes(ipodPathPattern) ? (
                 <div className="flex gap-2 pt-2 border-t border-gray-100">
                   <button
                     onClick={handleOpenInVideos}
@@ -601,13 +616,13 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
           {/* Action buttons */}
           <div className={cn(
             "pb-2 border-t",
-            theme === "macosx" 
-              ? "border-gray-300" 
+            theme === "macosx"
+              ? "border-gray-300"
               : "border-gray-200"
           )}>
             <div className="px-2 pt-2">
               {isYouTubeUrl(url) ? (
-                url.includes("os.ryo.lu/ipod/") ? (
+                url.includes(ipodPathPattern) ? (
                   <div className="flex gap-2">
                     <button
                       onClick={handleOpenInVideos}

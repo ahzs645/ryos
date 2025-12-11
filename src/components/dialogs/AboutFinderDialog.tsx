@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { useMemo, useState, useEffect } from "react";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { getTranslatedAppName } from "@/utils/i18n";
+import { getCreatorConfig, getFullOSName, getCVConfig } from "@/lib/config";
+import { useOSName } from "@/stores/useCvStore";
 
 interface AboutFinderDialogProps {
   isOpen: boolean;
@@ -53,6 +55,11 @@ export function AboutFinderDialog({
         .catch(() => setDesktopVersion('1.0.1')); // fallback
     }
   }, [isMac]);
+
+  // Get OS name from CV store (hook must be called unconditionally)
+  const cvOSName = useOSName(currentTheme);
+  const useCVBranding = getCVConfig().useCVForBranding;
+  const osName = useCVBranding ? cvOSName : getFullOSName(currentTheme);
 
   const memoryUsage = useMemo(() => {
     const totalMemory = 32; // 32MB total memory
@@ -105,16 +112,7 @@ export function AboutFinderDialog({
                     : "font-apple-garamond text-2xl "
                 )}
               >
-                ryOS
-                {currentTheme === "system7"
-                  ? " 7"
-                  : currentTheme === "macosx"
-                  ? " X"
-                  : currentTheme === "win98"
-                  ? " 98"
-                  : currentTheme === "xp"
-                  ? " XP"
-                  : ""}
+                {osName}
               </div>
               <div
                 className={cn(
@@ -168,10 +166,10 @@ export function AboutFinderDialog({
                       : undefined,
                   }}
                 >
-                  <p>© Ryo Lu. 1992-{new Date().getFullYear()}</p>
+© {getCreatorConfig().name}. {getCreatorConfig().copyrightStartYear}-{new Date().getFullYear()}
                   {isMac && desktopVersion && (
                     <p>
-                      <a 
+                      <a
                         href={`https://github.com/ryokun6/ryos/releases/download/v${desktopVersion}/ryOS_${desktopVersion}_aarch64.dmg`}
                         target="_blank"
                         rel="noopener noreferrer"

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { LyricsAlignment, ChineseVariant, KoreanDisplay } from "@/types/lyrics";
 import { LyricLine } from "@/types/lyrics";
-import { getApiUrl } from "@/utils/platform";
+import { assetUrl } from "@/lib/utils";
 
 // Define the Track type (can be shared or defined here)
 export interface Track {
@@ -84,7 +84,7 @@ async function loadDefaultTracks(forceRefresh = false): Promise<{
   // Start new fetch
   const fetchPromise = (async () => {
     try {
-      const res = await fetch("/data/ipod-videos.json");
+      const res = await fetch(assetUrl("/data/ipod-videos.json"));
       const data = await res.json();
       const videos: unknown[] = data.videos || data;
       const version = data.version || 1;
@@ -694,7 +694,7 @@ export const useIpodStore = create<IpodState>()(
 
         try {
           // Call /api/parse-title
-          const parseResponse = await fetch(getApiUrl("/api/parse-title"), {
+          const parseResponse = await fetch("/api/parse-title", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

@@ -5,10 +5,9 @@ import {
   type ChatMessage,
   type AIChatMessage,
 } from "@/types/chat";
-import { track } from "@vercel/analytics";
-import { APP_ANALYTICS } from "@/utils/analytics";
+import { track, APP_ANALYTICS } from "@/utils/analytics";
 import i18n from "@/lib/i18n";
-import { getApiUrl } from "@/utils/platform";
+import { getAIConfig } from "@/lib/config";
 
 // Recovery mechanism - uses different prefix to avoid reset
 const USERNAME_RECOVERY_KEY = "_usr_recovery_key_";
@@ -248,7 +247,7 @@ export interface ChatsStoreState {
 const getInitialAiMessage = (): AIChatMessage => ({
   id: "1",
   role: "assistant",
-  parts: [{ type: "text" as const, text: i18n.t("apps.chats.messages.greeting") }],
+  parts: [{ type: "text" as const, text: i18n.t("apps.chats.messages.greeting", { aiName: getAIConfig().name.toLowerCase() }) }],
   metadata: {
     createdAt: new Date(),
   },
@@ -430,7 +429,7 @@ export const useChatsStore = create<ChatsStoreState>()(
           }
 
           try {
-            const response = await fetch(getApiUrl("/api/chat-rooms?action=setPassword"), {
+            const response = await fetch("/api/chat-rooms?action=setPassword", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -906,7 +905,7 @@ export const useChatsStore = create<ChatsStoreState>()(
           // Inform server to invalidate current token if we have auth
           if (currentUsername && currentToken) {
             try {
-              await fetch(getApiUrl("/api/chat-rooms?action=logoutCurrent"), {
+              await fetch("/api/chat-rooms?action=logoutCurrent", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -1040,19 +1039,11 @@ export const useChatsStore = create<ChatsStoreState>()(
               set((state) => {
                 const existing = state.roomMessages[roomId] || [];
                 const byId = new Map<string, ChatMessage>();
-                
-                // Collect temp (optimistic) messages separately for deduplication
-                // Only messages with temp_ prefix IDs are considered optimistic
-                const tempMessages: ChatMessage[] = [];
+                // Seed with existing (preserve temp messages and clientId associations)
                 for (const m of existing) {
-                  if (m.id.startsWith("temp_")) {
-                    tempMessages.push(m);
-                  } else {
-                    byId.set(m.id, m);
-                  }
+                  byId.set(m.id, m);
                 }
-                
-                // Overlay fetched server messages
+                // Overlay fetched server messages, preserving clientId when present
                 for (const m of fetchedMessages) {
                   const prev = byId.get(m.id);
                   if (prev && prev.clientId) {
@@ -1061,46 +1052,6 @@ export const useChatsStore = create<ChatsStoreState>()(
                     byId.set(m.id, m);
                   }
                 }
-                
-                // Auto-delete temp messages that match server messages by clientId, or by username + content + time window
-                const MATCH_WINDOW_MS = 10000; // 10 second window
-                const usedTempIds = new Set<string>();
-                
-                for (const temp of tempMessages) {
-                  const tempClientId = temp.clientId || temp.id;
-                  let matched = false;
-                  
-                  // Check if any server message matches this temp message
-                  for (const serverMsg of fetchedMessages) {
-                    // Match by clientId if the server echoes it back
-                    const serverClientId = (serverMsg as ChatMessage & { clientId?: string }).clientId;
-                    if (serverClientId && serverClientId === tempClientId) {
-                      // Server message has matching clientId - associate and skip temp
-                      byId.set(serverMsg.id, { ...byId.get(serverMsg.id)!, clientId: tempClientId });
-                      matched = true;
-                      break;
-                    }
-                    
-                    // Match by username + content + time window
-                    if (
-                      serverMsg.username === temp.username &&
-                      serverMsg.content === temp.content &&
-                      Math.abs(serverMsg.timestamp - temp.timestamp) <= MATCH_WINDOW_MS
-                    ) {
-                      // Found matching server message - preserve clientId on it
-                      byId.set(serverMsg.id, { ...byId.get(serverMsg.id)!, clientId: tempClientId });
-                      matched = true;
-                      break;
-                    }
-                  }
-                  
-                  // If no match found, keep the temp message (might still be in flight)
-                  if (!matched && !usedTempIds.has(temp.id)) {
-                    byId.set(temp.id, temp);
-                    usedTempIds.add(temp.id);
-                  }
-                }
-                
                 const merged = Array.from(byId.values()).sort(
                   (a, b) => a.timestamp - b.timestamp
                 );
@@ -1173,19 +1124,7 @@ export const useChatsStore = create<ChatsStoreState>()(
 
                     const existing = nextRoomMessages[roomId] || [];
                     const byId = new Map<string, ChatMessage>();
-                    
-                    // Collect temp (optimistic) messages separately for deduplication
-                    // Only messages with temp_ prefix IDs are considered optimistic
-                    const tempMessages: ChatMessage[] = [];
-                    for (const m of existing) {
-                      if (m.id.startsWith("temp_")) {
-                        tempMessages.push(m);
-                      } else {
-                        byId.set(m.id, m);
-                      }
-                    }
-                    
-                    // Overlay fetched server messages
+                    for (const m of existing) byId.set(m.id, m);
                     for (const m of processed) {
                       const prev = byId.get(m.id);
                       if (prev && prev.clientId) {
@@ -1194,40 +1133,6 @@ export const useChatsStore = create<ChatsStoreState>()(
                         byId.set(m.id, m);
                       }
                     }
-                    
-                    // Auto-delete temp messages that match server messages
-                    const MATCH_WINDOW_MS = 10000;
-                    const usedTempIds = new Set<string>();
-                    
-                    for (const temp of tempMessages) {
-                      const tempClientId = temp.clientId || temp.id;
-                      let matched = false;
-                      
-                      for (const serverMsg of processed) {
-                        const serverClientId = (serverMsg as ChatMessage & { clientId?: string }).clientId;
-                        if (serverClientId && serverClientId === tempClientId) {
-                          byId.set(serverMsg.id, { ...byId.get(serverMsg.id)!, clientId: tempClientId });
-                          matched = true;
-                          break;
-                        }
-                        
-                        if (
-                          serverMsg.username === temp.username &&
-                          serverMsg.content === temp.content &&
-                          Math.abs(serverMsg.timestamp - temp.timestamp) <= MATCH_WINDOW_MS
-                        ) {
-                          byId.set(serverMsg.id, { ...byId.get(serverMsg.id)!, clientId: tempClientId });
-                          matched = true;
-                          break;
-                        }
-                      }
-                      
-                      if (!matched && !usedTempIds.has(temp.id)) {
-                        byId.set(temp.id, temp);
-                        usedTempIds.add(temp.id);
-                      }
-                    }
-                    
                     nextRoomMessages[roomId] = Array.from(byId.values()).sort(
                       (a, b) => a.timestamp - b.timestamp
                     );
@@ -1477,7 +1382,7 @@ export const useChatsStore = create<ChatsStoreState>()(
                   },
                   get().refreshAuthToken
                 )
-              : await fetch(getApiUrl("/api/chat-rooms?action=sendMessage"), {
+              : await fetch("/api/chat-rooms?action=sendMessage", {
                   method: "POST",
                   headers,
                   body: JSON.stringify({
@@ -1540,7 +1445,7 @@ export const useChatsStore = create<ChatsStoreState>()(
           }
 
           try {
-            const response = await fetch(getApiUrl("/api/chat-rooms?action=createUser"), {
+            const response = await fetch("/api/chat-rooms?action=createUser", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ username: trimmedUsername, password }),

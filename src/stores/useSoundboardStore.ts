@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Soundboard, SoundSlot, PlaybackState } from "@/types/types";
 import i18n from "@/lib/i18n";
+import { assetUrl } from "@/lib/utils";
 
 // Helper to create a default soundboard
 const createDefaultBoard = (): Soundboard => ({
@@ -74,7 +75,7 @@ export const useSoundboardStore = create<SoundboardStoreState>()(
         }
 
         try {
-          const response = await fetch("/data/soundboards.json");
+          const response = await fetch(assetUrl("/data/soundboards.json"));
           if (!response.ok)
             throw new Error(
               "Failed to fetch soundboards.json status: " + response.status

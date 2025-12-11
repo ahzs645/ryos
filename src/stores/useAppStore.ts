@@ -9,8 +9,7 @@ import { ShaderType } from "@/components/shared/GalaxyBackground";
 import { DisplayMode } from "@/utils/displayMode";
 import { AIModel } from "@/types/aiModels";
 import { ensureIndexedDBInitialized } from "@/utils/indexedDB";
-import { track } from "@vercel/analytics";
-import { APP_ANALYTICS } from "@/utils/analytics";
+import { track, APP_ANALYTICS } from "@/utils/analytics";
 export type { AIModel } from "@/types/aiModels";
 
 // ---------------- Types ---------------------------------------------------------

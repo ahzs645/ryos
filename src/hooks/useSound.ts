@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { getAudioContext, resumeAudioContext } from "@/lib/audioContext";
+import { assetUrl } from "@/lib/utils";
 
 // Global audio context and cache
 const audioBufferCache = new Map<string, AudioBuffer>();
@@ -204,37 +205,37 @@ export function useSound(soundPath: string, volume: number = 0.3) {
   return { play, playLoop, stop, fadeOut, fadeIn };
 }
 
-// Predefined sound paths for easy access
+// Predefined sound paths for easy access (using assetUrl for GitHub Pages compatibility)
 export const Sounds = {
-  ALERT_SOSUMI: "/sounds/AlertSosumi.mp3",
-  WINDOW_CLOSE: "/sounds/WindowClose.mp3",
-  WINDOW_OPEN: "/sounds/WindowOpen.mp3",
-  WINDOW_EXPAND: "/sounds/WindowExpand.mp3",
-  WINDOW_COLLAPSE: "/sounds/WindowCollapse.mp3",
-  WINDOW_ZOOM_MINIMIZE: "/sounds/WindowZoomMinimize.mp3",
-  WINDOW_ZOOM_MAXIMIZE: "/sounds/WindowZoomMaximize.mp3",
-  BUTTON_CLICK: "/sounds/ButtonClickDown.mp3",
-  MENU_OPEN: "/sounds/MenuOpen.mp3",
-  MENU_CLOSE: "/sounds/MenuClose.mp3",
+  ALERT_SOSUMI: assetUrl("/sounds/AlertSosumi.mp3"),
+  WINDOW_CLOSE: assetUrl("/sounds/WindowClose.mp3"),
+  WINDOW_OPEN: assetUrl("/sounds/WindowOpen.mp3"),
+  WINDOW_EXPAND: assetUrl("/sounds/WindowExpand.mp3"),
+  WINDOW_COLLAPSE: assetUrl("/sounds/WindowCollapse.mp3"),
+  WINDOW_ZOOM_MINIMIZE: assetUrl("/sounds/WindowZoomMinimize.mp3"),
+  WINDOW_ZOOM_MAXIMIZE: assetUrl("/sounds/WindowZoomMaximize.mp3"),
+  BUTTON_CLICK: assetUrl("/sounds/ButtonClickDown.mp3"),
+  MENU_OPEN: assetUrl("/sounds/MenuOpen.mp3"),
+  MENU_CLOSE: assetUrl("/sounds/MenuClose.mp3"),
   // Window movement and resize sounds
-  WINDOW_MOVE_MOVING: "/sounds/WindowMoveMoving.mp3",
-  WINDOW_MOVE_STOP: "/sounds/WindowMoveStop.mp3",
-  WINDOW_RESIZE_RESIZING: "/sounds/WindowResizeResizing.mp3",
-  WINDOW_RESIZE_STOP: "/sounds/WindowResizeStop.mp3",
+  WINDOW_MOVE_MOVING: assetUrl("/sounds/WindowMoveMoving.mp3"),
+  WINDOW_MOVE_STOP: assetUrl("/sounds/WindowMoveStop.mp3"),
+  WINDOW_RESIZE_RESIZING: assetUrl("/sounds/WindowResizeResizing.mp3"),
+  WINDOW_RESIZE_STOP: assetUrl("/sounds/WindowResizeStop.mp3"),
   // Minesweeper sounds
-  CLICK: "/sounds/Click.mp3",
-  ALERT_BONK: "/sounds/AlertBonk.mp3",
-  ALERT_INDIGO: "/sounds/AlertIndigo.mp3",
-  MSN_NUDGE: "/sounds/MSNNudge.mp3",
+  CLICK: assetUrl("/sounds/Click.mp3"),
+  ALERT_BONK: assetUrl("/sounds/AlertBonk.mp3"),
+  ALERT_INDIGO: assetUrl("/sounds/AlertIndigo.mp3"),
+  MSN_NUDGE: assetUrl("/sounds/MSNNudge.mp3"),
   // Video player sounds
-  VIDEO_TAPE: "/sounds/VideoTapeIn.mp3",
+  VIDEO_TAPE: assetUrl("/sounds/VideoTapeIn.mp3"),
   // Photo booth sounds
-  PHOTO_SHUTTER: "/sounds/PhotoShutter.mp3",
+  PHOTO_SHUTTER: assetUrl("/sounds/PhotoShutter.mp3"),
   // Boot sound
-  BOOT: "/sounds/Boot.mp3",
-  VOLUME_CHANGE: "/sounds/Volume.mp3",
+  BOOT: assetUrl("/sounds/Boot.mp3"),
+  VOLUME_CHANGE: assetUrl("/sounds/Volume.mp3"),
   // iPod sounds
-  IPOD_CLICK_WHEEL: "/sounds/WheelsOfTime.m4a",
+  IPOD_CLICK_WHEEL: assetUrl("/sounds/WheelsOfTime.m4a"),
 } as const;
 
 // Lazily preload sounds after the first user interaction (click or touch)

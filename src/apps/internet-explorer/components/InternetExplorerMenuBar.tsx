@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/menubar";
 import { AppProps } from "../../base/types";
 import { MenuBar } from "@/components/layout/MenuBar";
+import { assetUrl } from "@/lib/utils";
 import {
   Favorite,
   HistoryEntry,
@@ -96,7 +97,7 @@ const renderFavoriteItem = (
             alt=""
             className="w-4 h-4"
             onError={(e) => {
-              e.currentTarget.src = "/icons/default/ie-site.png";
+              e.currentTarget.src = assetUrl("/icons/default/ie-site.png");
             }}
           />
         ) : (
@@ -715,7 +716,7 @@ export function InternetExplorerMenuBar({
                       alt=""
                       className="w-4 h-4"
                       onError={(e) => {
-                        e.currentTarget.src = "/icons/default/ie-site.png";
+                        e.currentTarget.src = assetUrl("/icons/default/ie-site.png");
                       }}
                     />
                   ) : (

@@ -9,7 +9,7 @@ import {
   APPLET_AUTH_MESSAGE_TYPE,
 } from "@/utils/appletAuthBridge";
 import { useTranslation } from "react-i18next";
-import { getApiUrl } from "@/utils/platform";
+import { assetUrl } from "@/lib/utils";
 
 interface AppStoreFeedProps {
   theme?: string;
@@ -67,7 +67,7 @@ export const AppStoreFeed = forwardRef<AppStoreFeedRef, AppStoreFeedProps>(
   const ensureMacFonts = (content: string): string => {
     if (!content) return content;
     
-    const preload = `<link rel="stylesheet" href="/fonts/fonts.css">`;
+    const preload = `<link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">`;
     const fontStyle = isMacTheme ? `<style data-ryos-applet-font-fix>
       html,body{font-family:"LucidaGrande","Lucida Grande",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Noto Color Emoji",sans-serif!important}
       *{font-family:inherit!important}
@@ -199,7 +199,7 @@ export const AppStoreFeed = forwardRef<AppStoreFeedRef, AppStoreFeedProps>(
       return shuffled;
     };
     try {
-      const response = await fetch(getApiUrl("/api/share-applet?list=true"));
+      const response = await fetch("/api/share-applet?list=true");
       if (response.ok) {
         const data = await response.json();
         const allApplets = data.applets || [];
@@ -262,7 +262,7 @@ export const AppStoreFeed = forwardRef<AppStoreFeedRef, AppStoreFeedProps>(
       setLoadingContents((prev) => new Set(prev).add(appletId));
 
       try {
-        const response = await fetch(getApiUrl(`/api/share-applet?id=${encodeURIComponent(appletId)}`));
+        const response = await fetch(`/api/share-applet?id=${encodeURIComponent(appletId)}`);
         if (response.ok) {
           const data = await response.json();
           loadedRef.current.add(appletId);

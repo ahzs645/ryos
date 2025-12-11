@@ -17,6 +17,7 @@ import { useSoundboardStore } from "@/stores/useSoundboardStore";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { getTranslatedAppName } from "@/utils/i18n";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 interface ImportedSlot {
   audioData: string | null;
@@ -272,7 +273,7 @@ export function SoundboardAppComponent({
 
   const reloadFromJson = async () => {
     try {
-      const res = await fetch("/data/soundboards.json");
+      const res = await fetch(assetUrl("/data/soundboards.json"));
       const data = await res.json();
       const importedBoardsRaw = data.boards || [data];
       const newBoards: Soundboard[] = importedBoardsRaw.map(
@@ -301,7 +302,7 @@ export function SoundboardAppComponent({
 
   const reloadFromAllSounds = async () => {
     try {
-      const res = await fetch("/data/all-sounds.json");
+      const res = await fetch(assetUrl("/data/all-sounds.json"));
       const data = await res.json();
       const importedBoardsRaw = data.boards || [data];
       const newBoards: Soundboard[] = importedBoardsRaw.map(

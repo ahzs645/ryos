@@ -1,5 +1,9 @@
 import { BaseApp } from "../base/types";
 import { SoundboardAppComponent } from "./components/SoundboardAppComponent";
+import { getCreatorConfig, getOSConfig } from "@/lib/config";
+
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
 
 export const helpItems = [
   {
@@ -38,10 +42,10 @@ export const appMetadata = {
   name: "Soundboard",
   version: "0.2",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/default/cdrom.png",
 };
 

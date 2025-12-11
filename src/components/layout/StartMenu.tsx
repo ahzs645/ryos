@@ -13,6 +13,8 @@ import { AnyApp } from "@/apps/base/types";
 import { AppId } from "@/config/appIds";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { getTranslatedAppName } from "@/utils/i18n";
+import { getBaseOSName, getCVConfig } from "@/lib/config";
+import { useCvStore } from "@/stores/useCvStore";
 
 interface StartMenuProps {
   apps: AnyApp[];
@@ -24,6 +26,12 @@ export function StartMenu({ apps }: StartMenuProps) {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [aboutFinderOpen, setAboutFinderOpen] = useState(false);
   const currentTheme = useThemeStore((state) => state.current);
+
+  // Get OS name from CV or config
+  const cvDisplayName = useCvStore((state) => state.getDisplayName());
+  const useCVBranding = getCVConfig().useCVForBranding;
+  const osSuffix = import.meta.env.VITE_OS_SUFFIX || "OS";
+  const baseOSName = useCVBranding ? `${cvDisplayName}${osSuffix}` : getBaseOSName();
 
   const handleAppClick = (appId: string) => {
     launchApp(appId as AppId);
@@ -155,7 +163,7 @@ export function StartMenu({ apps }: StartMenuProps) {
                     textAlign: "left",
                   }}
                 >
-                  ryOS{" "}
+                  {baseOSName}{" "}
                   <span style={{ fontWeight: "100" }}>
                     {currentTheme === "xp" ? t("common.startMenu.ryosProfessional") : t("common.startMenu.ryos98")}
                   </span>

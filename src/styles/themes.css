@@ -108,7 +108,7 @@
   --os-metrics-menubar-height: 25px;
   --os-window-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   /* Shared texture variables */
-  --os-texture-toolbar-image: url("/assets/brushed-metal.jpg");
+  --os-texture-toolbar-image: var(--asset-brushed-metal);
   --os-texture-toolbar-size: cover;
   --os-texture-toolbar-repeat: no-repeat;
   --os-texture-toolbar-position: center;

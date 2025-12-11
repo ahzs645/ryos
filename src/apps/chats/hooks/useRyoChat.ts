@@ -8,7 +8,7 @@ import { useVideoStore } from "@/stores/useVideoStore";
 import { useIpodStore } from "@/stores/useIpodStore";
 import { useChatsStore } from "@/stores/useChatsStore";
 import { useLanguageStore } from "@/stores/useLanguageStore";
-import { getApiUrl } from "@/utils/platform";
+import { getAIConfig } from "@/lib/config";
 
 // Helper function to get system state for AI chat
 const getSystemState = () => {
@@ -118,14 +118,18 @@ export function useRyoChat({
     authHeaders["X-Username"] = username;
   }
 
-  // Create a separate AI chat hook for @ryo mentions in chat rooms
+  // Get AI config for the handle
+  const aiConfig = getAIConfig();
+  const aiHandle = `@${aiConfig.handle}`;
+
+  // Create a separate AI chat hook for mentions in chat rooms
   const {
     messages: ryoMessages,
     status,
     stop: stopRyo,
   } = useChat({
     transport: new DefaultChatTransport({
-      api: getApiUrl("/api/chat"),
+      api: "/api/chat",
       body: {
         systemState: getSystemState(),
       },
@@ -161,7 +165,7 @@ export function useRyoChat({
         headers["X-Username"] = username;
       }
 
-      await fetch(getApiUrl(`/api/chat-rooms?action=generateRyoReply`), {
+      await fetch(`/api/chat-rooms?action=generateRyoReply`, {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -178,17 +182,18 @@ export function useRyoChat({
 
   const detectAndProcessMention = useCallback(
     (input: string): { isMention: boolean; messageContent: string } => {
-      if (input.startsWith("@ryo ")) {
-        // Extract the message content after @ryo
-        const messageContent = input.substring(4).trim();
+      const handleWithSpace = `${aiHandle} `;
+      if (input.startsWith(handleWithSpace)) {
+        // Extract the message content after the AI handle
+        const messageContent = input.substring(aiHandle.length).trim();
         return { isMention: true, messageContent };
-      } else if (input === "@ryo") {
-        // If they just typed @ryo without a message, treat it as a nudge
+      } else if (input === aiHandle) {
+        // If they just typed the handle without a message, treat it as a nudge
         return { isMention: true, messageContent: t("apps.chats.status.nudgeSent") };
       }
       return { isMention: false, messageContent: "" };
     },
-    [t]
+    [t, aiHandle]
   );
 
   return {

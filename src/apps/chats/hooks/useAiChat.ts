@@ -8,7 +8,6 @@ import { useChatsStore } from "../../../stores/useChatsStore";
 import type { AIChatMessage } from "@/types/chat";
 import { useAppStore } from "@/stores/useAppStore";
 import { useInternetExplorerStore } from "@/stores/useInternetExplorerStore";
-import { getApiUrl } from "@/utils/platform";
 import { useVideoStore } from "@/stores/useVideoStore";
 import { useIpodStore } from "@/stores/useIpodStore";
 import { useThemeStore } from "@/stores/useThemeStore";
@@ -16,7 +15,6 @@ import { toast } from "@/hooks/useToast";
 import { useLaunchApp, type LaunchAppOptions } from "@/hooks/useLaunchApp";
 import { AppId } from "@/config/appIds";
 import { appRegistry } from "@/config/appRegistry";
-import { getTranslatedAppName } from "@/utils/i18n";
 import { requestCloseWindow } from "@/utils/windowUtils";
 import {
   useFileSystem,
@@ -30,6 +28,7 @@ import { useFilesStore } from "@/stores/useFilesStore";
 import { useLanguageStore } from "@/stores/useLanguageStore";
 import { generateHTML, generateJSON } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import { getAIConfig } from "@/lib/config";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import TaskList from "@tiptap/extension-task-list";
@@ -548,7 +547,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
 
   const chatTransport = useMemo(() => {
     return new DefaultChatTransport({
-      api: getApiUrl("/api/chat"),
+      api: "/api/chat",
       headers: async () => {
         const { username: currentUsername, authToken: currentToken } =
           useChatsStore.getState();
@@ -1303,7 +1302,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
                   ? Math.min(Math.max(limit, 1), 100)
                   : 50;
 
-                const response = await fetch(getApiUrl("/api/share-applet?list=true"));
+                const response = await fetch("/api/share-applet?list=true");
                 if (!response.ok) {
                   throw new Error(`Failed to list shared applets (HTTP ${response.status})`);
                 }
@@ -1495,7 +1494,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
                 // Fetch applet metadata to get the name
                 let appletName = shareId;
                 try {
-                  const response = await fetch(getApiUrl(`/api/share-applet?id=${encodeURIComponent(shareId)}`));
+                  const response = await fetch(`/api/share-applet?id=${encodeURIComponent(shareId)}`);
                   if (response.ok) {
                     const data = await response.json();
                     appletName = data.title || data.name || shareId;
@@ -1525,7 +1524,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
                 addToolResult({
                   tool: toolCall.toolName,
                   toolCallId: toolCall.toolCallId,
-                  output: `Launched ${getTranslatedAppName(appId)}`,
+                  output: `Launched ${appRegistry[appId].name}`,
                 });
                 result = "";
               } else if (path.startsWith("/Applets/")) {
@@ -1606,6 +1605,15 @@ export function useAiChat(onPromptSetUsername?: () => void) {
                 ] as AnyExtension[]);
 
                 const instanceId = launchApp("textedit", { multiWindow: true });
+                if (!instanceId) {
+                  addToolResult({
+                    tool: toolCall.toolName,
+                    toolCallId: toolCall.toolCallId,
+                    output: i18n.t("apps.chats.toolCalls.failedToOpenDocument"),
+                  });
+                  result = "";
+                  break;
+                }
                 await new Promise((resolve) => setTimeout(resolve, 100));
 
                 const textEditStore = useTextEditStore.getState();
@@ -1662,7 +1670,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
               if (path.startsWith("/Applets Store/")) {
                 // Fetch shared applet content
                 const shareId = path.replace("/Applets Store/", "");
-                const response = await fetch(getApiUrl(`/api/share-applet?id=${encodeURIComponent(shareId)}`));
+                const response = await fetch(`/api/share-applet?id=${encodeURIComponent(shareId)}`);
 
                 if (!response.ok) {
                   throw new Error(`Failed to fetch shared applet (HTTP ${response.status})`);
@@ -2696,7 +2704,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
     const initialMessage: AIChatMessage = {
       id: "1", // Ensure consistent ID for the initial message
       role: "assistant",
-      parts: [{ type: "text", text: i18n.t("apps.chats.messages.greeting") }],
+      parts: [{ type: "text", text: i18n.t("apps.chats.messages.greeting", { aiName: getAIConfig().name.toLowerCase() }) }],
       metadata: {
         createdAt: new Date(),
       },
@@ -2741,19 +2749,10 @@ export function useAiChat(onPromptSetUsername?: () => void) {
 
   const handleSaveSubmit = useCallback(
     async (fileName: string) => {
-      // Use messagesWithTimestamps from ref to get messages with proper timestamps
-      const messagesForTranscript = currentSdkMessagesRef.current;
-      const transcript = messagesForTranscript
-        .map((msg: AIChatMessage) => {
-          const createdAt = msg.metadata?.createdAt;
-          const time = createdAt
-            ? new Date(createdAt).toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })
-            : "";
-          const sender = msg.role === "user" ? username || "You" : "Ryo";
+      const transcript = aiMessages // Use messages from store
+        .map((msg: UIMessage) => {
+          const time = ""; // v5 UIMessage doesn't have createdAt
+          const sender = msg.role === "user" ? username || "You" : getAIConfig().name;
           const content = getAssistantVisibleText(msg);
           return `**${sender}** (${time}):\n${content}`;
         })
@@ -2763,10 +2762,6 @@ export function useAiChat(onPromptSetUsername?: () => void) {
         ? fileName
         : `${fileName}.md`;
       const filePath = `/Documents/${finalFileName}`;
-
-      // Check if file already exists to determine toast message
-      const existingFile = useFilesStore.getState().items[filePath];
-      const isUpdate = existingFile && existingFile.status === "active";
 
       try {
         await saveFile({
@@ -2778,32 +2773,9 @@ export function useAiChat(onPromptSetUsername?: () => void) {
         });
 
         setIsSaveDialogOpen(false);
-        toast.success(isUpdate ? "Transcript updated" : "Transcript saved", {
+        toast.success("Transcript saved", {
           description: `Saved to ${finalFileName}`,
-          duration: 5000,
-          action: {
-            label: "Open",
-            onClick: () => {
-              // Check if this file is already open in a TextEdit instance
-              const textEditStore = useTextEditStore.getState();
-              const existingInstanceId = textEditStore.getInstanceIdByPath(filePath);
-
-              if (existingInstanceId) {
-                // File is already open - update content and bring to foreground
-                const appStore = useAppStore.getState();
-                appStore.updateInstanceInitialData(existingInstanceId, {
-                  path: filePath,
-                  content: transcript,
-                });
-                appStore.bringInstanceToForeground(existingInstanceId);
-              } else {
-                // File not open - launch new TextEdit instance
-                launchApp("textedit", {
-                  initialData: { path: filePath, content: transcript },
-                });
-              }
-            },
-          },
+          duration: 3000,
         });
       } catch (error) {
         console.error("Error saving transcript:", error);
@@ -2812,7 +2784,7 @@ export function useAiChat(onPromptSetUsername?: () => void) {
         });
       }
     },
-    [username, saveFile, launchApp],
+    [aiMessages, username, saveFile],
   );
 
   // Stop both chat streaming and TTS queue

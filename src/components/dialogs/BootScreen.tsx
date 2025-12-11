@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useSound, Sounds } from "@/hooks/useSound";
 import { useTranslation } from "react-i18next";
+import { assetUrl } from "@/lib/utils";
 
 interface BootScreenProps {
   isOpen: boolean;
@@ -85,7 +86,7 @@ export function BootScreen({
           <div className="flex flex-col items-center justify-center p-8 min-h-[300px] w-full">
             <div className="flex flex-col items-center justify-center border border-neutral-200 bg-white p-8 w-full pb-4">
               <img
-                src="/assets/splash/macos.svg"
+                src={assetUrl("/assets/splash/macos.svg")}
                 alt="macOS"
                 className="w-64 h-32"
               />

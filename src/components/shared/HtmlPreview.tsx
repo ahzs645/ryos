@@ -16,6 +16,7 @@ import {
   loadHtmlPreviewSplit,
   saveHtmlPreviewSplit,
 } from "@/stores/useAppStore";
+import { assetUrl } from "@/lib/utils";
 import { useSound, Sounds } from "../../hooks/useSound";
 import { useAppStore } from "@/stores/useAppStore";
 import { useThemeStore } from "@/stores/useThemeStore";
@@ -376,7 +377,7 @@ export default function HtmlPreview({
     // Define the script tags and styles that should be added ONLY after streaming
     // Font link MUST be first for potentially faster loading/application
     const postStreamHeadContent = `
-    <link rel="stylesheet" href="/fonts/fonts.css">
+    <link rel="stylesheet" href="${assetUrl("/fonts/fonts.css")}">
     ${timestamp} 
     ${baseTag}
     ${APPLET_AUTH_BRIDGE_SCRIPT}

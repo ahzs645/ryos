@@ -4,6 +4,7 @@ import { getPusherClient } from "@/lib/pusherClient";
 import { useChatsStore } from "../../../stores/useChatsStore";
 import { toast } from "@/hooks/useToast";
 import { type ChatRoom, type ChatMessage } from "../../../../src/types/chat";
+import { getAIConfig } from "@/lib/config";
 
 const getGlobalChannelName = (username?: string | null): string =>
   username
@@ -53,8 +54,8 @@ export function useChatRoom(
     messageRenderLimit,
   } = useChatsStore();
 
-  // Derive isAdmin directly from the username
-  const isAdmin = username === "ryo";
+  // Derive isAdmin directly from the username (matches AI handle)
+  const isAdmin = username === getAIConfig().handle;
 
   // Pusher refs
   const pusherRef = useRef<ReturnType<typeof getPusherClient> | null>(null);

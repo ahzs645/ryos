@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
+import { getAIConfig } from "@/lib/config";
 
 // Extracted ChatRoomSidebar component
 interface ChatRoomSidebarProps {
@@ -219,7 +220,7 @@ export const ChatRoomSidebar: React.FC<ChatRoomSidebarProps> = ({
               onRoomSelect(null);
             }}
           >
-            {t("apps.chats.status.ryo")}
+            {t("apps.chats.status.ryo", { aiHandle: getAIConfig().handle })}
           </div>
           {/* Chat Rooms List (Sections) */}
           {Array.isArray(rooms) && (

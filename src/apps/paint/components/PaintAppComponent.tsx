@@ -466,9 +466,8 @@ export const PaintAppComponent: React.FC<AppProps<PaintInitialData>> = ({
         menuBar={isXpTheme ? menuBar : undefined}
       >
         <div
-          className="flex flex-col h-full w-full min-h-0 p-2"
+          className="flex flex-col h-full w-full min-h-0 p-2 pattern-bg-7"
           style={{
-            backgroundImage: 'url("/patterns/Property 1=7.svg")',
             backgroundRepeat: "repeat",
             backgroundColor: "#c0c0c0",
           }}

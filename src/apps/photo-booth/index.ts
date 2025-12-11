@@ -1,14 +1,18 @@
 import { BaseApp } from "../base/types";
 import { PhotoBoothComponent } from "./components/PhotoBoothComponent";
+import { getCreatorConfig, getOSConfig } from "@/lib/config";
+
+const creatorConfig = getCreatorConfig();
+const osConfig = getOSConfig();
 
 export const appMetadata = {
   name: "Photo Booth",
   version: "1.0.0",
   creator: {
-    name: "Ryo Lu",
-    url: "https://ryo.lu",
+    name: creatorConfig.name,
+    url: creatorConfig.url,
   },
-  github: "https://github.com/ryokun6/ryos",
+  github: osConfig.githubUrl,
   icon: "/icons/default/photo-booth.png",
 };
 

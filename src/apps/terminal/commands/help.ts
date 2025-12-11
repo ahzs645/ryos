@@ -1,12 +1,14 @@
 import { Command } from "../types";
 import i18n from "@/lib/i18n";
+import { getAIConfig } from "@/lib/config";
 
 export const helpCommand: Command = {
   name: "help",
   description: "apps.terminal.commands.help",
   handler: () => {
-    const t = (key: string) => i18n.t(key);
-    
+    const t = (key: string, params?: Record<string, string>) => i18n.t(key, params);
+    const aiHandle = getAIConfig().handle;
+
     return {
       output: `
 navigation & files
@@ -34,9 +36,9 @@ terminal
   cowsay <text>    ${t("apps.terminal.commands.cowsay")}
 
 assistant
-  ryo <prompt>     ${t("apps.terminal.commands.ryo")}
-  ai <prompt>      ${t("apps.terminal.commands.ai")}
-  chat <prompt>    ${t("apps.terminal.commands.chat")}
+  ${aiHandle} <prompt>     ${t("apps.terminal.commands.ryo", { aiHandle })}
+  ai <prompt>      ${t("apps.terminal.commands.ai", { aiHandle })}
+  chat <prompt>    ${t("apps.terminal.commands.chat", { aiHandle })}
 
 `,
       isError: false,

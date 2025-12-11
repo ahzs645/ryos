@@ -18,6 +18,7 @@ import { useThemeStore } from "@/stores/useThemeStore";
 import { ShareItemDialog } from "@/components/dialogs/ShareItemDialog";
 import { appRegistry } from "@/config/appRegistry";
 import { useTranslation } from "react-i18next";
+import { getAIConfig } from "@/lib/config";
 
 interface ChatsMenuBarProps {
   onClose: () => void;
@@ -203,7 +204,7 @@ export function ChatsMenuBar({
               }}
               className="text-md h-6 px-3"
             >
-              {t("apps.chats.status.ryo")}
+              {t("apps.chats.status.ryo", { aiHandle: getAIConfig().handle })}
             </MenubarCheckboxItem>
 
             {/* Chat List */}

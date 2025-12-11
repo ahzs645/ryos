@@ -7,6 +7,8 @@
 // 2. Prefetching now uses cache: 'reload' to bypass browser HTTP cache
 // 3. On updates, all caches are cleared before prefetching fresh icons
 
+import { assetUrl } from "@/lib/utils";
+
 export interface IconManifest {
   version: number;
   generatedAt: string;
@@ -19,7 +21,7 @@ let manifestPromise: Promise<IconManifest> | null = null;
 async function loadManifest(): Promise<IconManifest> {
   if (manifestCache) return manifestCache;
   if (!manifestPromise) {
-    manifestPromise = fetch("/icons/manifest.json", { cache: "no-store" })
+    manifestPromise = fetch(assetUrl("/icons/manifest.json"), { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error(`Failed to load icon manifest: ${r.status}`);
         return r.json();
@@ -53,22 +55,22 @@ export function pickIconPath(
 ): string {
   // No theme provided: always fallback.
   if (!theme) {
-    return `/icons/${fallbackTheme}/${name}`;
+    return assetUrl(`/icons/${fallbackTheme}/${name}`);
   }
   // If theme explicitly equals fallback, just return fallback path.
   if (theme === fallbackTheme) {
-    return `/icons/${fallbackTheme}/${name}`;
+    return assetUrl(`/icons/${fallbackTheme}/${name}`);
   }
   const m = manifestCache || manifest; // allow pre-supplied
   // If manifest not yet loaded, optimistically return themed path to avoid flash.
   if (!m) {
-    return `/icons/${theme}/${name}`;
+    return assetUrl(`/icons/${theme}/${name}`);
   }
   if (m.themes[theme] && m.themes[theme].includes(name)) {
-    return `/icons/${theme}/${name}`;
+    return assetUrl(`/icons/${theme}/${name}`);
   }
   // Fallback if manifest knows the theme or icon missing.
-  return `/icons/${fallbackTheme}/${name}`;
+  return assetUrl(`/icons/${fallbackTheme}/${name}`);
 }
 
 // React helper hook (lazy, no suspense) to resolve icon path.
@@ -97,7 +99,7 @@ export function resolveIconLegacyAware(
       (m && m.themes[maybeTheme]) || KNOWN_THEMES.includes(maybeTheme);
     if (isKnownTheme) {
       const relative = parts.slice(1).join("/");
-      if (!relative) return iconOrName; // nothing after theme
+      if (!relative) return assetUrl(iconOrName); // nothing after theme
       return pickIconPath(relative, { theme });
     }
     // Not a known theme folder; treat whole rest as a logical name (already relative).

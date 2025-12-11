@@ -1,7 +1,7 @@
 import { AnyApp } from "@/apps/base/types";
 import { AppManagerState } from "@/apps/base/types";
 import { AppId } from "@/config/appRegistry";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { FileIcon } from "@/apps/finder/components/FileIcon";
 import { getAppIconPath } from "@/config/appRegistry";
 import { useWallpaper } from "@/hooks/useWallpaper";
@@ -16,6 +16,7 @@ import { STORES } from "@/utils/indexedDB";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { useTranslation } from "react-i18next";
 import { getTranslatedAppName } from "@/utils/i18n";
+import { assetUrl } from "@/lib/utils";
 
 interface DesktopStyles {
   backgroundImage?: string;
@@ -44,6 +45,16 @@ export function Desktop({
   const [selectedShortcutPath, setSelectedShortcutPath] = useState<string | null>(null);
   const { wallpaperSource, isVideoWallpaper } = useWallpaper();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Resolve wallpaper path with base URL for static paths
+  const resolvedWallpaperSource = useMemo(() => {
+    // Pass through data URLs, blob URLs, and remote URLs
+    if (/^(https?:|data:|blob:|\/\/)/i.test(wallpaperSource)) {
+      return wallpaperSource;
+    }
+    // Apply base URL for local static assets
+    return assetUrl(wallpaperSource);
+  }, [wallpaperSource]);
   const [sortType, setSortType] = useState<SortType>("name");
   const [contextMenuPos, setContextMenuPos] = useState<{
     x: number;
@@ -388,7 +399,7 @@ export function Desktop({
   const getWallpaperStyles = (path: string): DesktopStyles => {
     if (!path || isVideoWallpaper) return {};
 
-    const isTiled = path.includes("/wallpapers/tiles/");
+    const isTiled = wallpaperSource.includes("/wallpapers/tiles/");
     return {
       backgroundImage: `url(${path})`,
       backgroundSize: isTiled ? "64px 64px" : "cover",
@@ -399,7 +410,7 @@ export function Desktop({
   };
 
   const finalStyles = {
-    ...getWallpaperStyles(wallpaperSource),
+    ...getWallpaperStyles(resolvedWallpaperSource),
     ...desktopStyles,
   };
 
@@ -619,20 +630,22 @@ export function Desktop({
       } catch (err) {
         console.warn(`[Desktop] Failed to resolve icon for app ${appId}:`, err);
       }
-      return "/icons/default/application.png";
+      return assetUrl("/icons/default/application.png");
     }
-    
+
     // For file aliases, use stored icon or resolve from target
     if (shortcut.icon && shortcut.icon.trim() !== "") {
-      return shortcut.icon;
+      // Resolve stored icon path with base URL if it's a local path
+      return shortcut.icon.startsWith("/") ? assetUrl(shortcut.icon) : shortcut.icon;
     }
-    
+
     if (shortcut.aliasType === "file" && shortcut.aliasTarget) {
       const targetFile = fileStore.getItem(shortcut.aliasTarget);
-      return targetFile?.icon || "/icons/default/file.png";
+      const icon = targetFile?.icon || "/icons/default/file.png";
+      return icon.startsWith("/") ? assetUrl(icon) : icon;
     }
-    
-    return "/icons/default/file.png";
+
+    return assetUrl("/icons/default/file.png");
   };
 
   return (
@@ -654,7 +667,7 @@ export function Desktop({
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover z-[-10]"
-        src={wallpaperSource}
+        src={resolvedWallpaperSource}
         autoPlay
         loop
         muted
@@ -725,7 +738,7 @@ export function Desktop({
             name={isXpTheme ? t("common.desktop.myComputer") : t("apps.finder.window.macintoshHd")}
             isDirectory={true}
             icon={
-              isXpTheme ? "/icons/default/pc.png" : "/icons/default/disk.png"
+              isXpTheme ? assetUrl("/icons/default/pc.png") : assetUrl("/icons/default/disk.png")
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -795,7 +808,7 @@ export function Desktop({
               isDirectory={false}
               icon={
                 isXpTheme && app.id === "pc"
-                  ? `/icons/${currentTheme}/games.png`
+                  ? assetUrl(`/icons/${currentTheme}/games.png`)
                   : getAppIconPath(app.id)
               }
               onClick={(e) => handleIconClick(app.id, e)}
